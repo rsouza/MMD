@@ -1,0 +1,20 @@
+Instruções para o trabalho de análise de séries temporais
+
+A primeira avaliação da disciplina de Modelagem e Mineração de Dados consiste em um trabalho de análise de séries temporais comparadas, buscando por correlações entre os eventos.
+
+Algumas informações sobre a tarefa:
+
+1) Deve-se escolher uma série temporal de eventos que possam estar relacionados ao comportamento da bolsa de valores IBOVESPA. Não é necessário que os eventos tenham a mesma janela temporal da série da IBOVESPA publicada no Moodle, mas o período a ser comparado deve ser ajustado de acordo.
+
+2) Pode-se escolher qualquer série temporal de eventos que sejam possivelmente relacionados: a ideia é que exercitem a percepção e análise sobre fenômenos históricos, econômicos, sociais e culturais.
+
+3) Deve-se discutir o relacionamento das séries, apoiando a argumentação a partir de gráficos.
+
+4) O trabalho é INDIVIDUAL, mas pode ser realizado em grupo.
+
+5) A Data de entrega é 08/08/2011
+
+6) O trabalho deve ser enviado em formato PDF por e-mail: rsouza.fgv@gmail.com
+
+Bom trabalho.
+
