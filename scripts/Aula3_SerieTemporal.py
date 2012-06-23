@@ -19,13 +19,13 @@ http://matplotlib.sourceforge.net/
 
 from numpy import loadtxt, arange, subtract, linspace, concatenate, zeros_like
 from matplotlib.pyplot import plot, scatter, boxplot, semilogx, semilogy, loglog, show, title, legend, figure
-from scipy import linspace, polyval, polyfit, sqrt, stats, randn
+from scipy import polyval, polyfit, sqrt, stats, randn
 from scipy.stats import linregress, describe
 from scipy.signal import gaussian, convolve, mean, correlate
-from pylab import hist, movavg
+from pylab import hist, movavg, datestr2num
 
 '''Specifying the path to the files'''
-datapath = "/home/rsouza/Documentos/Git/MMD/datasets/"
+datapath = "/home/renato/Documentos/Git/MMD/datasets/"
 dataset = "cotacoesbovespa.txt"
 
 '''loading the dataset
@@ -65,24 +65,25 @@ figure(5)
 title('Bovespa - six months smoothing')
 plot (cot_after[60:-60,0], movavg(cot_after[:,1],121)) 
 
-'''Smoothing with a gaussian filter
+'''
+Smoothing with a gaussian filter
 1) Building a gaussian filter with 31 points and standard deviation of 4
-2) Normalizing the filter dividing by the sum of the elements'''
+2) Normalizing the filter dividing by the sum of the elements
+3) Convoluting the serie with the filter
+4) Comparing the series (original, moving averages and Gaussian smoothed)
+'''
 
 filt = gaussian(31, 4)
 filt /= sum(filt)
-
 figure(6)
 plot (filt)
+cot_after_Gsmooth = convolve(cot_after[:,1], filt, mode='valid')
+figure(7, figsize=(14,10))
+plot(cot_after[:,0], cot_after[:,1], 'r' )
+plot (cot_after[10:-10,0], movavg(cot_after[:,1]-9000,21), 'g')
+plot (cot_after[15:-15,0], cot_after_Gsmooth+9000, 'b')
 
-# 3) Convoluindo a serie com o filtro
-#cotord2suave = convolve(cotord2[:,1], filt, mode='valid')
-
-# Mostrando as series original e suavizada conjuntamente:
-#figure(5, figsize=(14,10))
-#plot(cotord2[:,0], cotord2[:,1], 'r' )
-#plot (cotord2[10:-10,0], movavg(cotord2[:,1]-9000,21), 'g')
-#plot (cotord2[15:-15,0], cotord2suave+9000, 'b')
+show()
 
 #Calculando a funcao de autocorrelacao:
 # 1) Subtraindo a media 
