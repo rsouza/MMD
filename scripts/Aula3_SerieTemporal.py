@@ -68,6 +68,7 @@ plot (cot_after[60:-60,0], movavg(cot_after[:,1],121))
 '''
 Smoothing with a gaussian filter
 1) Building a gaussian filter with 31 points and standard deviation of 4
+http://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.gaussian.html
 2) Normalizing the filter dividing by the sum of the elements
 3) Convoluting the serie with the filter
 4) Comparing the series (original, moving averages and Gaussian smoothed)
@@ -83,18 +84,19 @@ plot(cot_after[:,0], cot_after[:,1], 'r' )
 plot (cot_after[10:-10,0], movavg(cot_after[:,1]-9000,21), 'g')
 plot (cot_after[15:-15,0], cot_after_Gsmooth+9000, 'b')
 
-show()
+'''Calculating the Cross-correlation of two 1-dimensional sequences:
+http://docs.scipy.org/doc/numpy/reference/generated/numpy.correlate.html    
+1) Subctrating the mean
+2) Adding the a vector of zeros of the same size, to run the autocorrelation
+(optionally you can analyse just a part of the series
+3) Normalize dividing by the values of the first element
+'''
 
-#Calculando a funcao de autocorrelacao:
-# 1) Subtraindo a media 
-#cotsubmedia = cotord2suave - mean(cotord2suave)
-# 2) Acrescentando aa serie um vetor de zeros de mesmo tamanhos, aplicando a funcao correlacao
-#corr = correlate(cotsubmedia, concatenate((cotsubmedia,zeros_like(cotsubmedia))), mode='valid')
-# 3) opcional: analise apenas um grupo de elementos
+cotsubmedia = cot_after - mean(cot_after)
+corr = correlate(cotsubmedia, concatenate((cotsubmedia,zeros_like(cotsubmedia))), mode='valid')
 #corr = corr[:1000]
-# 4) Normalize dividindo pelo valor do primeiro elemento
-#corr /= corr[0]
-
-#figure(6, figsize=(14,10))
-#title('Funcao de Autocorrelacao')
-#plot(corr)
+corr /= corr[0]
+figure(8, figsize=(14,10))
+title('Cross Correlation Function')
+plot(corr)
+show()
