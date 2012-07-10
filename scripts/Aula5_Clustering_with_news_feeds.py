@@ -25,7 +25,6 @@ import random
 '''Specifying the path to the files'''
 datapath = "/home/rsouza/Documentos/Git/MMD/datasets/"
 outputs = "/home/rsouza/Documentos/outputs/"
-dataset = "cotacoesbovespa.txt"
 
 listafeeds = "ch05_feedlist.txt"
 stopwords = "ch05_stopwords.txt"
