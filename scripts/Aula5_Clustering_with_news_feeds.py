@@ -21,21 +21,21 @@ import re
 from PIL import Image,ImageDraw
 from math import sqrt
 import random
+import nltk
 
 '''Specifying the path to the files'''
 datapath = "/home/rsouza/Documentos/Git/MMD/datasets/"
 outputs = "/home/rsouza/Documentos/outputs/"
-dataset = "cotacoesbovespa.txt"
 
 listafeeds = "ch05_feedlist.txt"
-stopwords = "ch05_stopwords.txt"
 saida = "output.txt"
 dendrog1 = "feedclusters.jpg"
 dendrog2 = "wordclusters.jpg"
 g2d1 = "g2dfeeds.jpg"
 g2d2 = "g2dwords.jpg"
+stoplist_en = nltk.corpus.stopwords.words('english')
+stoplist_pt = nltk.corpus.stopwords.words('portuguese')
 lfeeds = (datapath+listafeeds)
-lstopwords = (datapath+stopwords)
 fsaida = (outputs+saida)
 dendsaida = (outputs+dendrog1)
 dendsaida2 = (outputs+dendrog2)
@@ -50,7 +50,7 @@ def getwords(html):
     splits the sentences by the non alpha characters
     and converts all words to lowercase'''
     txt = re.compile(r'<[^>]+>').sub('',html)
-    words = re.compile(r'[^A-Z^a-z]+').split(txt)
+    words = re.compile(ur'[^A-Z^a-z]+').split(txt)
     return [word.lower() for word in words if word!='']
 
 def getwordcounts(url):
@@ -65,9 +65,7 @@ def getwordcounts(url):
         else:
             summary = entry.description
         words = getwords(entry.title+' '+summary)
-        stoplist = file(lstopwords).readlines()
-        stoplist = [word.strip() for word in stoplist]
-        words = [word for word in words if word not in stoplist]
+        words = [word for word in words if word not in stoplist_en]
         for word in words:
             wc.setdefault(word,0) #setting default values to zero
             wc[word] += 1 # incrementing every time it occurs
@@ -95,7 +93,7 @@ def neither_common_nor_rare(apcount, feedlist):
     wordlist = []
     for w,bc in apcount.items():
         frac = float(bc)/len(feedlist)
-        if frac > 0.1 and frac < 0.9: #ajustar estes parametros
+        if frac > 0.1 and frac < 0.9: #parameters needs to be adjusted
             wordlist.append(w)
     return wordlist
     
@@ -112,7 +110,7 @@ def createoutputfile(wordlist, wordcounts, filename):
     for word in wordlist: out.write('\t%s' % word)
     out.write('\n')
     for feed,wc in wordcounts.items():
-        print 'Processado o feed: ', feed 
+        print('Processing the feed: {}').format(feed)
         out.write(feed)
         for word in wordlist:
             if word in wc: out.write('\t%d' % wc[word])
@@ -135,7 +133,7 @@ def rotatematrix(data):
     newdata = []
     for i in range(len(data[0])):
         newrow = [data[j][i] for j in range(len(data))]
-        newdata.append(newrow)#separa a primeira linha pelas virgulas
+        newdata.append(newrow)
     return newdata
 
 '''Third block of functions - calculating the clusters'''
@@ -159,7 +157,7 @@ def pearson(v1,v2):
     sum1Sq = sum([pow(v,2) for v in v1])
     sum2Sq = sum([pow(v,2) for v in v2])	
     # Sum of the products
-    pSum = sum([v1[i]*v2[i] for i in range(len(v1))])#separa a primeira linha pelas virgulas
+    pSum = sum([v1[i]*v2[i] for i in range(len(v1))])
     # Calculate r (Pearson score)
     num = pSum-(sum1*sum2/len(v1))
     den = sqrt((sum1Sq-pow(sum1,2)/len(v1))*(sum2Sq-pow(sum2,2)/len(v1)))
@@ -170,7 +168,7 @@ def hcluster(rows,distance=pearson):
     '''Calculating hierarchical clusters'''
     distances = {}
     currentclustid =- 1
-    # Inicialmente, cada conjunto de frequencia de palavras e um cluster
+    # Initially, each word is a cluster
     clust=[bicluster(rows[i],id=i) for i in range(len(rows))]
     while len(clust) > 1:
         lowestpair = (0,1)
@@ -207,7 +205,7 @@ def kcluster(rows,distance=pearson,k=6):
     # Create k randomly placed centroids
     clusters=[[random.random()*(ranges[i][1]-ranges[i][0])+ranges[i][0] 
     for i in range(len(rows[0]))] for j in range(k)]
-    lastmatches=None#separa a primeira linha pelas virgulas
+    lastmatches=None
     for t in range(100):
         print 'Iteration %d' % t
         bestmatches=[[] for i in range(k)]
@@ -225,7 +223,7 @@ def kcluster(rows,distance=pearson,k=6):
         # Move the centroids to the average of their members
         for i in range(k):
             avgs=[0.0]*len(rows[0])
-            if len(bestmatches[i])>0:#separa a primeira linha pelas virgulas
+            if len(bestmatches[i])>0:
                 for rowid in bestmatches[i]:
                     for m in range(len(rows[rowid])):
                         avgs[m]+=rows[rowid][m]
@@ -264,7 +262,7 @@ def scaledown(data,distance=pearson,rate=0.01):
                 grad[k][1]+=((loc[k][1]-loc[j][1])/fakedist[j][k])*errorterm
                 # Keep track of the total error
                 totalerror+=abs(errorterm)
-        print totalerror#separa a primeira linha pelas virgulas
+        print totalerror
         # If the answer got worse by moving the points, we are done
         if lasterror and lasterror<totalerror: break
         lasterror=totalerror
@@ -332,7 +330,6 @@ def draw2d(data,labels,jpeg='mds2d.jpg'):
         y=(data[i][1]+0.5)*1000
         draw.text((x,y),labels[i],(0,0,0))
     img.save(jpeg,'JPEG')  
-
 
 
 
