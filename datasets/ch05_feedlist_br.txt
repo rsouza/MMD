@@ -1,0 +1,6 @@
+http://www.revistapesquisa.fapesp.br/rss.php
+http://www.agencia.fapesp.br/rss/noticias.xml
+http://oglobo.globo.com/rss/plantao.xml
+http://info.abril.com.br/aberto/infonews/rssnews.xml
+http://feeds.folha.uol.com.br/folha/informatica/rss091.xml
+http://feeds.folha.uol.com.br/emcimadahora/rss091.xml
