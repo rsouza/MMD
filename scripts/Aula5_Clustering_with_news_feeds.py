@@ -27,21 +27,23 @@ import nltk
 datapath = "/home/rsouza/Documentos/Git/MMD/datasets/"
 outputs = "/home/rsouza/Documentos/outputs/"
 
-listafeeds = "ch05_feedlist.txt"
+listafeeds = ['ch05_feedlist_en.txt', 'ch05_feedlist_br.txt'] 
 saida = "output.txt"
 dendrog1 = "feedclusters.jpg"
 dendrog2 = "wordclusters.jpg"
 g2d1 = "g2dfeeds.jpg"
 g2d2 = "g2dwords.jpg"
+fw_cluster='feeds_words_cluster.txt'
+
 stoplist_en = nltk.corpus.stopwords.words('english')
 stoplist_pt = nltk.corpus.stopwords.words('portuguese')
-lfeeds = (datapath+listafeeds)
+lfeeds = (datapath+listafeeds[0])
 fsaida = (outputs+saida)
 dendsaida = (outputs+dendrog1)
 dendsaida2 = (outputs+dendrog2)
 g2dsaida = (outputs+g2d1)
 g2dsaida2 = (outputs+g2d2)
-
+fwc_saida = (outputs+fw_cluster)
 
 '''First block of functions - reading and processing the words in blog feeds'''
 
@@ -65,6 +67,7 @@ def getwordcounts(url):
         else:
             summary = entry.description
         words = getwords(entry.title+' '+summary)
+        #words = [word for word in words if word not in stoplist_en]
         words = [word for word in words if word not in stoplist_en]
         for word in words:
             wc.setdefault(word,0) #setting default values to zero
@@ -255,7 +258,10 @@ def scaledown(data,distance=pearson,rate=0.01):
             for j in range(n):
                 if j==k: continue
                 # The error is percent difference between the distances
-                errorterm=(fakedist[j][k]-realdist[j][k])/realdist[j][k]
+                if realdist[j][k] != 0:
+                    errorterm=(fakedist[j][k]-realdist[j][k])/realdist[j][k]
+                else: #preventing the error for portuguese blogs
+                    errorterm=fakedist[j][k]
                 # Each point needs to be moved away from or towards the other
                 # point in proportion to how much error it has
                 grad[k][0]+=((loc[k][0]-loc[j][0])/fakedist[j][k])*errorterm
@@ -334,33 +340,45 @@ def draw2d(data,labels,jpeg='mds2d.jpg'):
 
 
 if __name__ == '__main__':
-    #reads the list of blogs to analyze
+    print('Reading the list of blogs to analyze...')
     feedlist=[line for line in file(lfeeds)]
+    print('Accessing blogs - rss feeds')
     apcount, wordcounts = getwordcountfeeds(lfeeds, feedlist)
+    print('Processing the feeds...')
     wordlist = neither_common_nor_rare(apcount, feedlist)
+    print('Creating an output file with results...')    
     createoutputfile(wordlist, wordcounts, fsaida)
+    
+    print('Reading the results file...')    
     feednames,words,freqwords = readfile(fsaida)
 
-    #drawing the (hierarchical) dendrogram by feeds
+    print('Drawing the (hierarchical) dendrogram by feeds...')
     feedclust = hcluster(freqwords)
     drawdendrogram(feedclust,feednames,jpeg=dendsaida)
-
-    #inverting the data matrix
-    #drawing the (hierarchical) dendrogram by words
+    print('Inverting the data matrix...')
     freqfeeds = rotatematrix(freqwords)
+    print('Drawing the (hierarchical) dendrogram by words...')
     wordclust = hcluster(freqfeeds) 
     drawdendrogram(wordclust,words,jpeg=dendsaida2)
-
-    #drawing the 2D map by feeds
+    print('Drawing the 2D map by feeds...')
     coordsf = scaledown(freqwords)
     draw2d(coordsf, feednames, jpeg=g2dsaida)
-    
-    #drawing the 2D map by words
+    print('Drawing the 2D map by words...')
     coordsw = scaledown(freqfeeds)
     draw2d(coordsw, words, jpeg=g2dsaida2)
     
-    #cluster feeds and words usando k-means - textual output
+    print('Cluster feeds and words usando k-means...')
+    f = open(fwc_saida, 'w')
     kfeedcluster = kcluster(freqwords)
-    for i in range(len(kfeedcluster)): print [feednames[r] for r in kfeedcluster[i]]
-    kwordcluster = kcluster(freqfeeds)
-    for i in range(len(kwordcluster)): print [words[r] for r in kwordcluster[i]]
+    kwordcluster = kcluster(freqfeeds)    
+    f.write('\n*** Feeds cluster ***\n\n')    
+    for i in range(len(kfeedcluster)):
+        f.write('\n\nCluster #{}\n\n'.format(i))
+        for item in [feednames[r] for r in kfeedcluster[i]]:
+            f.write('{}\n'.format(item))
+    f.write('\n\n*** Words cluster ***\n\n')
+    for i in range(len(kwordcluster)):
+        f.write('\n\nCluster #{}\n\n'.format(i))        
+        for item in [words[r] for r in kwordcluster[i]]:
+            f.write('{}\n'.format(item))
+    f.close()
