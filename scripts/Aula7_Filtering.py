@@ -38,90 +38,75 @@ usedb = True #False
 '''First block of functions: feature extraction'''
 
 def getwords(doc):
-    """Separa as palavras por todos os caracteres nao alfabeticos, transforma em 
-    minusculas e ignora palavras muito pequenas ou muito grandes.
-    Retorna um dicionario com as palavras sem repeticao. A funcao getwords eh 
-    adequada quando nossas features sao palavras. Estas podem ser, em outras 
-    implementacoes, grupos de palavras, numero de maiusculas, ou outra 
-    caracteristica qualquer para efeitos de classificacao"""
-    #print 'Documento --> "',doc,'"'
+    '''Remove the HTML tags and cleans the feeds files;splits the sentences 
+    by the non alpha characters and converts all words to lowercase.
+    Ignores bigger and too small words'''
+    print('Documento -->  {}'.format(doc))
     splitter=re.compile('\\W*')
     words=[s.lower() for s in splitter.split(doc) if len(s)>2 and len(s)<20]
     return dict([(w,1) for w in words])
     
 def entryfeatures(entry):
-    """Ao inves de lidar com documentos consttuidos de palavras, lida com 
-    entradas de um feed no formato rss (um arquivo xml). A funcao entryfeatures
-    eh adequada quando nossas features sao feeds rss"""
+    '''Used when our features are not documents, but feeds rss'''
     splitter=re.compile('\\W*')
     f={}
-    # Extrai as palavras do titulo e as marca como tal
+    # Extract title words
     titlewords=[s.lower() for s in splitter.split(entry['title']) 
                 if len(s)>2 and len(s)<20]
     for w in titlewords: f['Title:'+w]=1
-    # Extrai as palavras do sumario
+    # Extract summary words
     summarywords=[s.lower() for s in splitter.split(entry['summary']) 
                 if len(s)>2 and len(s)<20]
-    # Conta as palavras que estao em maiusculo
+    # Count lowercase words
     uc=0
     for i in range(len(summarywords)):
         w=summarywords[i]
         f[w]=1
         if w.isupper(): uc+=1
-        # COnsidera pares de palavras no sumario como features
+        # Features are words in the feed summary
         if i<len(summarywords)-1:
             twowords=' '.join(summarywords[i:i+1])
             f[twowords]=1
-    # Mantem o criador ou editor como uma unica palavra
+    # Save publisher information
     f['Publisher:'+entry['publisher']]=1
-    # MAIUSCULAS se transforma em uma feature que indica muitas palavras maiusculas
+    # Too many uppercase words are indicated
     if float(uc)/len(summarywords)>0.3: f['MAIUSCULAS']=1
     return f
 
 '''Second block of functions: classification'''
 
 class classifier:
-    """A classe representa o classificador, armazenando as informacoes
-    aprendidas ate o momento. Sendo uma classe, pode ser instanciada
-    para grupos diferentes e classificacoes distintas"""
-    
+    ''' Represents the classifier, storing what's learnt from training.
+    fc saves the combination words/categories {'word': {'bad': 3, 'good': 2}}
+    and cc is a dictionary that stores the number of times a category was used
+    {'bad': 3, 'good': 2}. Will be used when no DB is used.
+    Getfeatures is the feature extraction function to be used'''
     def __init__(self,getfeatures,filename=None):
-        # fc guarda a contagem de combinacoes features/categorias
-        # No caso de fatures = palavras, eh um dicionario
-        # no formato {'palavra': {'ruim': 3, 'bom': 2}}
         self.fc={}
-        # cc eh um dicionario que guarda o numero de vezes em que uma
-        # categoria ex: {'ruim': 3, 'bom': 2}} foi usada.
         self.cc={}
-        # fc e cc nao sao usados caso estejamos optando por persistir os
-        #dados em um banco de dados (ver funcoes abaixo)        
-        #getfeatures sera a funcao que extraira as features. Nesse exemplo, 
-        #sera a funcao getwords, pois as features sao palavras
         self.getfeatures=getfeatures 
     
     def setdb(self,dbfile):
-        """Caso estejamos trabalhando com um banco de dados para persistir
-        (armazenar para as proximas sessoes) o treinamento realizado ate entao,
-        usamos a funcao setdb para inicializar as tabelas"""
+        '''When using a database and not dictionaries, to persist the information
+        across sessions'''
         self.con=sqlite.connect(dbfile)    
         self.con.execute('create table if not exists fc(feature,category,count)')
         self.con.execute('create table if not exists cc(category,count)')
 
     def fcount(self,f,cat):
-        """Essa funcao retorna o numero de vezes que uma feature aparece em uma
-        categoria. Podemos usar um dicionario ou um banco de dados"""
+        '''Returns the number of times a feature appears in a category'''
         if not usedb:
             if f in self.fc and cat in self.fc[f]: return float(self.fc[f][cat])
             else: return 0
         else:
-            res=self.con.execute('select count from fc where feature="%s" and category="%s"' %(f,cat)).fetchone()
+            res=self.con.execute('''select count from fc where feature="{}" 
+                                and category="{}"'''.format(f,cat)).fetchone()
             if res==None: return 0
             else: return float(res[0])
 
     def incf(self,f,cat):
-        """Essa funcao cria um par feature/categoria, caso nao exista, ou entao
-        incrementa o numero de ocorrencias de uma feature em uma determinada
-        categoria. Podemos usar um dicionario ou um banco de dados"""
+        '''Creates a feature/category pair if not exists, or increase the number
+        if feature exists in a category'''
         if not usedb:
             self.fc.setdefault(f,{})
             self.fc[f].setdefault(cat,0)
@@ -129,48 +114,44 @@ class classifier:
         else:
             count=self.fcount(f,cat)
             if count==0:
-                self.con.execute("insert into fc values ('%s','%s',1)" % (f,cat))
+                self.con.execute('insert into fc values ("{}","{}",1)'.format(f,cat))
             else:
-                self.con.execute("update fc set count=%d where feature='%s' and category='%s'" 
-                                %(count+1,f,cat)) 
+                self.con.execute('''update fc set count={} where feature="{}" 
+                                and category="{}"'''.format(count+1,f,cat)) 
 
     def incc(self,cat):
-        """Essa funcao incrementa o numero de ocorrencias de uma categoria.
-        Podemos usar um dicionario ou um banco de dados"""
+        '''Increases the number of occurrences of a category'''
         if not usedb:
             self.cc.setdefault(cat,0)
             self.cc[cat]+=1        
         else:
             count=self.catcount(cat)
             if count==0:
-                self.con.execute("insert into cc values ('%s',1)" % (cat))
+                self.con.execute('insert into cc values ("{}",1)'.format(cat))
             else:
-                self.con.execute("update cc set count=%d where category='%s'"
-                                %(count+1,cat))    
+                self.con.execute('''update cc set count={} where 
+                                category="{}"'''.format(count+1,cat))    
 
     def catcount(self,cat):
-        """Essa funcao conta o numero de itens em uma categoria.
-        Podemos usar um dicionario ou um banco de dados"""
+        '''Counts the numer of itens in a category'''
         if not usedb:
             if cat in self.cc: return float(self.cc[cat])
             else: return 0
         else:
-            res=self.con.execute('select count from cc where category="%s"'
-                                %(cat)).fetchone()
+            res=self.con.execute('''select count from cc where category="{}"
+                                '''.format(cat)).fetchone()
             if res==None: return 0
             else: return float(res[0])
 
     def categories(self):
-        """Essa funcao lista todas as categorias.
-        Podemos usar um dicionario ou um banco de dados"""
+        '''Lists all the categories'''        
         if not usedb: return self.cc.keys()
         else:
             cur=self.con.execute('select category from cc');
             return [d[0] for d in cur]
 
     def totalcount(self):
-        """Essa funcao retorna o numero total de itens. 
-        Podemos usar um dicionario ou um banco de dados"""
+        ''' Returns the total numer of itens'''
         if not usedb: return sum(self.cc.values())
         else:
             res=self.con.execute('select sum(count) from cc').fetchone();
@@ -178,56 +159,41 @@ class classifier:
             else: return res[0]
 
     def train(self,item,cat):
-        """Essa funcao recebe um item (neste exemplo, um documento contendo 
-        palavras, que sao as features e uma classificacao (ex:spam) e aumenta o
-        numero relativo a aquela classificacao para cada feature (palavra, neste 
-        exemplo) na nossa estrutura de armazenamento. Podemos usar um dicionario
-        ou um banco de dados"""
+        '''Receives an item (bag of features) and a classification, and increases
+        the relative number of this classifications for all the features'''
         features=self.getfeatures(item)
-        # Incrementa a contagem para cada item nesta categoria com a funcao incf
         for f in features:
             self.incf(f,cat)
-        #Incrementa a contagem da categoria
         self.incc(cat)
         if usedb: self.con.commit()
 
     def fprob(self,f,cat):
-        """Essa funcao calcula a probabilidade de uma feature aparecer em uma
-        determinada categoria. Conta-se o numero de vezes que uma feature
-        (palavra) aparece em uma categoria e divide-se pelo numero total de
-        itens nesta categoria"""
+        '''Calculates the probability of a feature to be within a category'''
         if self.catcount(cat)==0: return 0
         return self.fcount(f,cat)/self.catcount(cat)
 
     def weightedprob(self,f,cat,prf,weight=1.0,ap=0.5):
-        """Essa funcao tambem calcula a probabilidade de uma feature aparecer em
-        uma determinada categoria como faz fprob, mas enquanto fprob se baseia apenas
-        no treinamento para determinar a probabilidade de uma feature aparecer em
-        uma categoria, weightedprob comeca com um valor inicial e vai mudando de acordo
-        com o treinamento. Isto impede que poucos documentos classificados de uma
-        determinada maneira estabelecam a categoria de uma palavra de forma extrema"""
-        # Calcula a probabilidade atual
+        '''Calculates the probability of a feature to appear in a certain category
+        as fprob does, but assuming an initial value and changing according to 
+        the training. That minimizes the effect of a rare word to be classified
+        erroneously'''
         basicprob=prf(f,cat)
-        # Conta o numero de vezes que a feature aparece em todas as categorias
         totals=sum([self.fcount(f,c) for c in self.categories()])
-        # Calcula a probabilidade ponderada
         bp=((weight*ap)+(totals*basicprob))/(weight+totals)
         return bp
 
 
 class naivebayes(classifier):
-    """Estende a classe classifier, sobrepondo o metodo __init__
-    e acrescentando as funcoes especificas para classificar documentos
-    usando naive bayes"""
+    '''Extends classifier class overiding __init__ and adding specific functions
+    to classify documents using naive bayes'''
     
     def __init__(self,getfeatures):
         classifier.__init__(self,getfeatures)
         self.thresholds={}
         
     def docprob(self,item,cat):
-        """Esta funcao calcula a probabilidade de um documento estar em uma
-        categoria atraves da multiplicacao de todas as probabilidades de cada 
-        uma das features (palavras, neste caso) do documento"""
+        '''Calculates the probability of a document to be within a given
+        category multiplying all the features probabilities to be in this category'''
         features=self.getfeatures(item)
         p=1
         for f in features: p*=self.weightedprob(f,cat,self.fprob)
@@ -246,8 +212,8 @@ class naivebayes(classifier):
         return self.thresholds[cat]
 
     def classify(self,item,default=None):
+        '''Finds the most probably category to classify'''        
         probs={}
-        # Acha a categoria com maior probabilidade para classificacao
         max=0.0
         for cat in self.categories():
             probs[cat]=self.prob(item,cat)
@@ -263,9 +229,8 @@ class naivebayes(classifier):
         return best
 
 class fisherclassifier(classifier):
-    """Estende a classe classifier, sobrepondo o metodo __init__
-    e acrescentando as funcoes especificas para uma classificacao
-    usando o metodo de fisher"""
+    '''Extends classifier class overiding __init__ and adding specific functions
+    to classify documents using fisher method'''
 
     def __init__(self,getfeatures):
         classifier.__init__(self,getfeatures)
