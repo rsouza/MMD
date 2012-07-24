@@ -33,7 +33,6 @@ outblog = "blogoutputrss.xml"
 db_teste = (outputs+dbfile1)
 db_blog = (outputs+dbfile2)
 rssblogoutput = (outputs+outblog)
-usedb = True #False
 
 '''First block of functions: feature extraction'''
 
@@ -41,7 +40,7 @@ def getwords(doc):
     '''Remove the HTML tags and cleans the feeds files;splits the sentences 
     by the non alpha characters and converts all words to lowercase.
     Ignores bigger and too small words'''
-    print('Documento -->  {}'.format(doc))
+    #print('Documento -->  {}'.format(doc))
     splitter=re.compile('\\W*')
     words=[s.lower() for s in splitter.split(doc) if len(s)>2 and len(s)<20]
     return dict([(w,1) for w in words])
@@ -81,86 +80,95 @@ class classifier:
     and cc is a dictionary that stores the number of times a category was used
     {'bad': 3, 'good': 2}. Will be used when no DB is used.
     Getfeatures is the feature extraction function to be used'''
-    def __init__(self,getfeatures,filename=None):
+    def __init__(self, getfeatures, filename=None, usedb=False):
         self.fc={}
         self.cc={}
-        self.getfeatures=getfeatures 
+        self.getfeatures = getfeatures
+        self.usedb = usedb
     
     def setdb(self,dbfile):
         '''When using a database and not dictionaries, to persist the information
         across sessions'''
-        self.con=sqlite.connect(dbfile)    
+        self.con = sqlite.connect(dbfile)    
         self.con.execute('create table if not exists fc(feature,category,count)')
         self.con.execute('create table if not exists cc(category,count)')
 
     def fcount(self,f,cat):
         '''Returns the number of times a feature appears in a category'''
-        if not usedb:
-            if f in self.fc and cat in self.fc[f]: return float(self.fc[f][cat])
-            else: return 0
+        if not self.usedb:
+            if f in self.fc and cat in self.fc[f]: 
+                return float(self.fc[f][cat])
+            else: 
+                return 0
         else:
-            res=self.con.execute('''select count from fc where feature="{}" 
-                                and category="{}"'''.format(f,cat)).fetchone()
-            if res==None: return 0
-            else: return float(res[0])
+            query = 'select count from fc where feature="{}" and category="{}"'
+            res = self.con.execute(query.format(f,cat)).fetchone()
+            if res == None: 
+                return 0
+            else: 
+                return float(res[0])
 
     def incf(self,f,cat):
         '''Creates a feature/category pair if not exists, or increase the number
         if feature exists in a category'''
-        if not usedb:
+        if not self.usedb:
             self.fc.setdefault(f,{})
             self.fc[f].setdefault(cat,0)
-            self.fc[f][cat]+=1
+            self.fc[f][cat] += 1
         else:
             count=self.fcount(f,cat)
-            if count==0:
+            if count == 0:
                 self.con.execute('insert into fc values ("{}","{}",1)'.format(f,cat))
             else:
-                self.con.execute('''update fc set count={} where feature="{}" 
-                                and category="{}"'''.format(count+1,f,cat)) 
+                query = 'update fc set count={} where feature="{}" and category="{}"'
+                self.con.execute(query.format(count+1,f,cat)) 
 
     def incc(self,cat):
         '''Increases the number of occurrences of a category'''
-        if not usedb:
+        if not self.usedb:
             self.cc.setdefault(cat,0)
-            self.cc[cat]+=1        
+            self.cc[cat] += 1        
         else:
             count=self.catcount(cat)
-            if count==0:
+            if count == 0:
                 self.con.execute('insert into cc values ("{}",1)'.format(cat))
             else:
-                self.con.execute('''update cc set count={} where 
-                                category="{}"'''.format(count+1,cat))    
+                query = 'update cc set count={} where category="{}"'
+                self.con.execute(query.format(count+1,cat))    
 
     def catcount(self,cat):
         '''Counts the numer of itens in a category'''
-        if not usedb:
-            if cat in self.cc: return float(self.cc[cat])
-            else: return 0
+        if not self.usedb:
+            if cat in self.cc:
+                return float(self.cc[cat])
+            else:
+                return 0
         else:
-            res=self.con.execute('''select count from cc where category="{}"
-                                '''.format(cat)).fetchone()
-            if res==None: return 0
-            else: return float(res[0])
+            query = 'select count from cc where category="{}"'
+            res=self.con.execute(query.format(cat)).fetchone()
+            if res == None:
+                return 0
+            else:
+                return float(res[0])
 
     def categories(self):
         '''Lists all the categories'''        
-        if not usedb: return self.cc.keys()
+        if not self.usedb: return self.cc.keys()
         else:
             cur=self.con.execute('select category from cc');
             return [d[0] for d in cur]
 
     def totalcount(self):
         ''' Returns the total numer of itens'''
-        if not usedb: return sum(self.cc.values())
+        if not self.usedb: return sum(self.cc.values())
         else:
             res=self.con.execute('select sum(count) from cc').fetchone();
             if res==None: return 0
             else: return res[0]
 
     def train(self,item,cat):
-        '''Receives an item (bag of features) and a classification, and increases
-        the relative number of this classifications for all the features'''
+        '''Receives an item (a bag of features) and a category, and increases
+        the relative number of this category for all the features'''
         features=self.getfeatures(item)
         for f in features:
             self.incf(f,cat)
@@ -184,12 +192,13 @@ class classifier:
 
 
 class naivebayes(classifier):
-    '''Extends classifier class overiding __init__ and adding specific functions
+    '''Extends classifier class overriding __init__ and adding specific functions
     to classify documents using naive bayes'''
     
-    def __init__(self,getfeatures):
+    def __init__(self, getfeatures, usedb=False):
         classifier.__init__(self,getfeatures)
-        self.thresholds={}
+        self.thresholds = {}
+        self.usedb = usedb
         
     def docprob(self,item,cat):
         '''Calculates the probability of a document to be within a given
@@ -211,31 +220,34 @@ class naivebayes(classifier):
         if cat not in self.thresholds: return 1.0
         return self.thresholds[cat]
 
-    def classify(self,item,default=None):
-        '''Finds the most probably category to classify'''        
-        probs={}
-        max=0.0
+    def classify(self, item, default=None):
+        '''Finds the most probably category to be set, and apply this
+        classification, given that it satisfies a minimum threshold, compared
+        to the second best category to classify; otherwise sets to "None"'''        
+        probs = {}
+        maximum = 0.0
+        best = None
         for cat in self.categories():
-            probs[cat]=self.prob(item,cat)
-            if probs[cat]>max: 
-                max=probs[cat]
-                best=cat
-        # Assegura-se que a probabilidade excede o limiar minimo estabelecido
-        # entre a categoria escolhida a proxima categoria com maior probabilidade.
-        # Caso negativo, retorna a categoria default (None ou Unknown, neste caso)
+            probs[cat] = self.prob(item, cat)
+            if probs[cat] > maximum: 
+                maximum = probs[cat]
+                best = cat
         for cat in probs:
-            if cat==best: continue
-            if probs[cat]*self.getthreshold(best)>probs[best]: return default
+            if cat == best:
+                continue
+            if probs[cat]*self.getthreshold(best) > probs[best]: 
+                return default
         return best
 
 class fisherclassifier(classifier):
-    '''Extends classifier class overiding __init__ and adding specific functions
+    '''Extends classifier class overriding __init__ and adding specific functions
     to classify documents using fisher method'''
 
-    def __init__(self,getfeatures):
-        classifier.__init__(self,getfeatures)
-        self.minimums={}
-    
+    def __init__(self,getfeatures, usedb=False):
+        classifier.__init__(self, getfeatures)
+        self.minimums = {}
+        self.usedb = usedb
+        
     def cprob(self,f,cat):
         '''Returns the frequency of the feature in a category divided
         by the frequency in all categories'''
@@ -256,63 +268,62 @@ class fisherclassifier(classifier):
     def fisherprob(self,item,cat):
         '''Multipy all the categories, applies the natural log
         and uses the inverse chi2 to calculate probabilty'''
-        p=1
-        features=self.getfeatures(item)
+        p = 1
+        features = self.getfeatures(item)
         for f in features:
-            p*=(self.weightedprob(f,cat,self.cprob))
-        fscore=-2*math.log(p)
+            p *= (self.weightedprob(f,cat,self.cprob))
+        fscore =- 2*math.log(p)
         return self.invchi2(fscore,len(features)*2)
 
-    def setminimum(self,cat,min):
-        self.minimums[cat]=min
+    def setminimum(self,cat, minimum):
+        self.minimums[cat] = minimum
 
     def getminimum(self,cat):
         if cat not in self.minimums: return 0
         return self.minimums[cat]
 
-    def classify(self,item,default=None):
-        '''Applies fisher to all categories to find the best result'''
-        best=default
-        max=0.0
+    def classify(self, item, default=None):
+        '''Applies fisher to all categories to find the best result, given 
+        that it satisfies a minimum threshold, otherwise sets to "None"'''
+        best = default
+        maximum = 0.0
         for c in self.categories():
-            p=self.fisherprob(item,c)
-            # Assegurando-se que esta excede o minimo estabelecido
-            if p>self.getminimum(c) and p>max:
-                best=c
-                max=p
+            p = self.fisherprob(item,c)
+            if p>self.getminimum(c) and p > maximum:
+                best = c
+                maximum = p
         return best
 
-'''Third block of functions: reading files or feeds'''
+'''Third block of functions: reading files or searching for feeds'''
 
-def blogread(assunto,classifier): #(feed,classifier) -->caso fosse arquivo e nao web
-    """Recebe uma url de um feed rss e classifica as entradas. Pode ler direto
-    da web ou receber um arquivo rss xml como entrada - linhas comentadas"""
-    # Recebe as entradas do feed e itera em cada uma
-    url='http://www.google.com/search?q={}&hl=pt-BR&tbm=blg&output=rss'.format(assunto)
-    #f=feedparser.parse(feed) #-->caso fosse arquivo e nao web
-    f=feedparser.parse(url)
+def blogread(file_or_subject, classifier, search=True):
+    '''Receives an url to search Google for blogs in a given subject, or a 
+    rss xml file with saved feeds. Tries to classify the entries'''
+    if search:
+        generic = 'http://www.google.com/search?q={}&hl=pt-BR&tbm=blg&output=rss'
+        url = generic.format(file_or_subject)
+        f = feedparser.parse(url)
+    else:
+        f = feedparser.parse(file_or_subject)
     for entry in f['entries']:
-        print
-        print '-----'
-        # Exibe o conteudo de uma entrada do feed
-        print 'Title:     '+entry['title'].encode('utf-8')
-        print 'Publisher: '+entry['publisher'].encode('utf-8')
-        print
-        print entry['summary'].encode('utf-8')
-        # Combina as partes em um texto unico para ser classificado
-        fulltext='%s\n%s\n%s' % (entry['title'],entry['publisher'],entry['summary'])
-        # Exibe o melhor palpite para a categoria em questao
-        print 'Guess: '+str(classifier.classify(entry))
-        # Pede ao usuario para especificar a categoria correta
-        # e treina o classificador nesta categoria
-        cl=raw_input('Enter category: ').lower()
+        fulltext='{}\n{}\n{}'.format(entry['title'],entry['publisher'],entry['summary'])        
+        print('\n-----')
+        print('Title:     '+entry['title'].encode('utf-8'))
+        print('Publisher: '+entry['publisher'].encode('utf-8'))
+        print()        
+        print(entry['summary'].encode('utf-8'))
+        guess = classifier.classify(entry)
+        print('Suggested: {}'.format(guess))
+        cl = raw_input('Enter category or press <enter> to accept suggestion: ').lower()
+        if cl == ''.strip() and guess:
+            cl = guess
+        print('Category "{}" chosen'.format(cl))
         classifier.train(entry,cl)
-
-'''Fourth block of functions: tests and demonstrations'''
+        
+'''Fourth block of functions: instantiating and training classifiers'''
 
 def sampletrain(cl):
-    """Algumas sentencas para prover um treinamento inicial
-    dos classificadores"""
+    print('Running sampletrain to train the classifier...')
     cl.train('Nobody owns the water.','good')
     cl.train('the quick rabbit jumps fences','good')
     cl.train('buy pharmaceuticals now','bad')
@@ -321,88 +332,99 @@ def sampletrain(cl):
 
 def probabilidades_palavras():
     cl = classifier(getwords)
+    print('\n')    
     sampletrain(cl)
-    print 'Em quantas frases "quick" --> bom:' , cl.fcount('quick','good')
-    print 'Em quantas frases "quick" --> ruim:' , cl.fcount('quick','bad')
-    print 'A probabilidade de ter "quick" dado que eh bom:',cl.fprob('quick','good')
-    print 'A probabilidade de ter "money" dado que eh bom:'
-    print cl.fprob('money','good'), 'usando fprob'
-    print 'A probabilidade ponderada de ter "money" dado que eh bom:'
-    print cl.weightedprob('money','good',cl.fprob), 'usando weightedprob'
-    print 'treinando de novo com os mesmos documentos. . . . . . .'
+    
+    print('How many times "quick" --> "good": {}'.format(cl.fcount('quick','good')))
+    print('How many times "quick" --> "bad": {}'.format(cl.fcount('quick','bad')))
+    print('\nProbability of "quick" given that "good": {}'.format(cl.fprob('quick','good')))
+    print('Probability of "money" given that "good" (fprob): {}'.format(cl.fprob('money','good')))
+    print('Weighted probability of "money" given that "good" (weightedprob): {}'.format(cl.weightedprob('money','good',cl.fprob)))
+
+    print('\nTraining again with the same documents...\n')
     sampletrain(cl)
-    print 'A probabilidade de ter "money" dado que eh bom:'
-    print cl.fprob('money','good'), 'usando fprob'
-    print 'A probabilidade ponderada de ter "money" dado que eh bom:'
-    print cl.weightedprob('money','good',cl.fprob), 'usando weightedprob'
+
+    print('\nProbability of "money" given that "good" (fprob): {}'.format(cl.fprob('money','good')))
+    print('Weighted probability of "money" given that "good" (weightedprob): {}\n'.format(cl.weightedprob('money','good',cl.fprob)))
 
 def probabilidades_documentos_bayes():
     cl = naivebayes(getwords)
+    print('\n')    
     sampletrain(cl)
-    #print 'A probabilidade de ser bom dado que: ',cl.prob('quick rabbit','good')
-    #print 'A probabilidade de ser ruim dado que: ',cl.prob('quick rabbit','bad')
-    print 'A classificacao prevista para  "quick rabbit" '
-    print cl.classify('quick rabbit', default = 'unknown')
-    print 'A classificacao prevista para  "quick money" '
-    print cl.classify('quick money', default = 'unknown')
-    print 'Aumentando o limiar para que um documento seja considerado ruim...'
+    
+    print('Classifying "quick rabbit": {}'.format(cl.classify('quick rabbit', default='unknown')))
+    print('Classifying "quick money": {}'.format(cl.classify('quick money', default='unknown')))
+    
+    print('\nSetting the threshold up...')
     cl.setthreshold('bad',3.0)
-    print 'A classificacao prevista para  "quick money" '
-    print cl.classify('quick money', default = 'unknown')
-    print 'rodando os dados de treinamento mais 10 vezes...'
+
+    print('Classifying "quick money": {}'.format(cl.classify('quick money', default='unknown')))
+    
+    print('\nTraining again with the same documents (10x)...')
     for i in range(10): sampletrain(cl)
-    print 'A classificacao prevista para  "quick money" ' 
-    print cl.classify('quick money', default = 'unknown')
+    
+    print('\nClassifying "quick money": {}'.format(cl.classify('quick money', default='unknown')))
 
 def probabilidades_palavras_fisher():
     cl = fisherclassifier(getwords)
+    print('\n')    
     sampletrain(cl)
-    print 'A probabilidade de ter "quick" dado que eh bom:'
-    print cl.cprob('quick', 'good')
-    print 'A probabilidade de ter "money" dado que eh bom:'
-    print cl.cprob('money', 'bad')
-    print 'A probabilidade ponderada de ter "money" dado que eh ruim:'
-    print cl.weightedprob('money','bad',cl.cprob), 'usando weightedprob'
+    print('\n')      
+    print('Probability of "quick" given that "good": {}'.format(cl.cprob('quick', 'good')))
+    print('Probability of "money" given that "bad": {}'.format(cl.cprob('money', 'bad')))
+    print('Weighted probability of  "money" given that "bad": {}'.format(cl.weightedprob('money','bad',cl.cprob)))
 
 def probabilidades_documentos_fisher():
     cl = fisherclassifier(getwords)
+    print('\n')    
     sampletrain(cl)
-    print 'A classificacao prevista para  "quick rabbit" '
-    print cl.classify('quick rabbit')
-    print 'A classificacao prevista para  "quick money" '
-    print cl.classify('quick money')
-    print 'Aumentando o limiar para que um documento seja considerado ruim...'
+
+    print('Classifying "quick rabbit": {}'.format(cl.classify('quick rabbit')))
+    print('Classifying "quick money": {}'.format(cl.classify('quick money')))
+   
+    print('\nSetting the threshold up...')
     cl.setminimum('bad',0.8)
-    print 'A classificacao prevista para  "quick money" '
-    print cl.classify('quick money')
-    print 'Diminuindo o limiar para que um documento seja considerado ruim...'
+    print('Classifying "quick money": {}'.format(cl.classify('quick money')))
+
+    print('\nSetting the threshold down...')
     cl.setminimum('bad',0.4)
-    print 'A classificacao prevista para  "quick money" ' 
-    print cl.classify('quick money', default = 'unknown')
+    print('Classifying "quick money": {}'.format(cl.classify('quick money')))
 
-def usando_dbase():
-    cl = fisherclassifier(getwords)
+def using_db_example():
+    '''Training with a classifier, persisting in a database
+    using the training data to classify using another classifier'''
+    print('\nInstantiating a fisher classifier...')
+    cl = fisherclassifier(getwords, usedb=True)
     cl.setdb(db_teste)
-    sampletrain(cl) #treinando usando fisher
-    cl2 = naivebayes(getwords)
-    cl2.setdb(db_teste) #usando o treino de fisher para classificar com bayes
-    print cl.classify('quick money')
+    sampletrain(cl)
+    print('\nInstantiating a naive bayes classifier...')    
+    cl2 = naivebayes(getwords, usedb=True)
+    cl2.setdb(db_teste)
+    print('Classifying "quick money": {}'.format(cl.classify('quick money')))
 
-def classifica_blogs(assunto):
-    cl = fisherclassifier(entryfeatures) #usa entryfeatures ao inves de getwords
+def classifying_blogs(subject=''):
+    '''Instantiating a new classifier using "entryfeatures" (for feeds)
+    Creating the database for the persistance of training data
+    Using blogread with searching feeds option - no file reading'''
+    cl = fisherclassifier(entryfeatures, usedb=True)
     cl.setdb(db_blog)
-    #blogread(rssblogoutput,cl) #lendo o feed gravado em um arquivo
-    blogread(assunto,cl)    
-    print "Lista de categorias usadas:"
-    for c in cl.categories(): print c
-    print "Teste agora as probabilidades com cprob('<palavra>,<categoria>')"
-    print "Ou as probabilidades com fprob('<categoria>','<palavra>')"
-    return cl
-    
+    if not subject:
+        subject = raw_input('\n\nPlease enter a subject to search for feeds: ').lower()
+    blogread(subject, cl)    
+    print('\nList of categories stored in the database:')
+    for category in cl.categories(): 
+        print(category)
+    print('\n\nDo some tests now with:')
+    print('cl.cprob(<category>,<word>)')
+    print('cl.fprob(<word>,<category>)\n')
+
 if __name__ == '__main__':
-    #probabilidades_palavras()
-    #probabilidades_documentos_bayes()
-    #probabilidades_palavras_fisher()
-    #probabilidades_documentos_fisher()
-    #usando_dbase()
-    clb = classifica_blogs('fgv')
+    probabilidades_palavras()
+    probabilidades_documentos_bayes()
+    probabilidades_palavras_fisher()
+    probabilidades_documentos_fisher()
+    using_db_example()
+    #classifying_blogs('Dilma')
+
+
+
