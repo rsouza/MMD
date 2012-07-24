@@ -173,7 +173,7 @@ class classifier:
         for f in features:
             self.incf(f,cat)
         self.incc(cat)
-        if usedb: self.con.commit()
+        if self.usedb: self.con.commit()
 
     def fprob(self,f,cat):
         '''Calculates the probability of a feature to be within a category'''
@@ -226,7 +226,7 @@ class naivebayes(classifier):
         to the second best category to classify; otherwise sets to "None"'''        
         probs = {}
         maximum = 0.0
-        best = None
+        #best = None
         for cat in self.categories():
             probs[cat] = self.prob(item, cat)
             if probs[cat] > maximum: 
@@ -265,7 +265,7 @@ class fisherclassifier(classifier):
             sum += term
         return min(sum, 1.0)
 
-    def fisherprob(self,item,cat):
+    def prob(self,item,cat):
         '''Multipy all the categories, applies the natural log
         and uses the inverse chi2 to calculate probabilty'''
         p = 1
@@ -288,7 +288,7 @@ class fisherclassifier(classifier):
         best = default
         maximum = 0.0
         for c in self.categories():
-            p = self.fisherprob(item,c)
+            p = self.prob(item,c)
             if p>self.getminimum(c) and p > maximum:
                 best = c
                 maximum = p
@@ -400,7 +400,7 @@ def using_db_example():
     print('\nInstantiating a naive bayes classifier...')    
     cl2 = naivebayes(getwords, usedb=True)
     cl2.setdb(db_teste)
-    print('Classifying "quick money": {}'.format(cl.classify('quick money')))
+    print('Classifying "quick money": {}'.format(cl2.classify('quick money')))
 
 def classifying_blogs(subject=''):
     '''Instantiating a new classifier using "entryfeatures" (for feeds)
@@ -419,12 +419,9 @@ def classifying_blogs(subject=''):
     print('cl.fprob(<word>,<category>)\n')
 
 if __name__ == '__main__':
-    probabilidades_palavras()
-    probabilidades_documentos_bayes()
-    probabilidades_palavras_fisher()
-    probabilidades_documentos_fisher()
-    using_db_example()
-    #classifying_blogs('Dilma')
-
-
-
+    #probabilidades_palavras()
+    #probabilidades_documentos_bayes()
+    #probabilidades_palavras_fisher()
+    #probabilidades_documentos_fisher()
+    #using_db_example()
+    classifying_blogs()
