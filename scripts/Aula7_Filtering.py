@@ -237,13 +237,11 @@ class fisherclassifier(classifier):
         self.minimums={}
     
     def cprob(self,f,cat):
-        # A frequencia desta feature (palavra) nesta categoria    
+        '''Returns the frequency of the feature in a category divided
+        by the frequency in all categories'''
         clf=self.fprob(f,cat)
         if clf==0: return 0
-        #  A frequencia desta feature (palavra) em todas as categorias
         freqsum=sum([self.fprob(f,c) for c in self.categories()])
-        # A probabilidade eh a frequencia nesta categoria dividido pela
-        # frequencia em todas as categorias.
         p=clf/(freqsum)
         return p
 
@@ -256,14 +254,13 @@ class fisherclassifier(classifier):
         return min(sum, 1.0)
 
     def fisherprob(self,item,cat):
-        # Multiplica todas as categorias
+        '''Multipy all the categories, applies the natural log
+        and uses the inverse chi2 to calculate probabilty'''
         p=1
         features=self.getfeatures(item)
         for f in features:
             p*=(self.weightedprob(f,cat,self.cprob))
-        # Aplica o logaritmo natural e multiplica por -2
         fscore=-2*math.log(p)
-        # Usa o inverso da funcao chi2 para chegar a probabilidade 
         return self.invchi2(fscore,len(features)*2)
 
     def setminimum(self,cat,min):
@@ -274,8 +271,7 @@ class fisherclassifier(classifier):
         return self.minimums[cat]
 
     def classify(self,item,default=None):
-        # Aplica fisher em todas as categorias buscando pelo
-        # melhor resultado
+        '''Applies fisher to all categories to find the best result'''
         best=default
         max=0.0
         for c in self.categories():
