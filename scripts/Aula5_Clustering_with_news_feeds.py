@@ -14,6 +14,7 @@ Information on the Python Packages used:
 http://www.feedparser.org/
 http://docs.python.org/library/re.html
 http://www.pythonware.com/library/pil/handbook/index.htm
+http://nltk.org/
 '''
 
 import feedparser

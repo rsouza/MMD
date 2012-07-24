@@ -26,8 +26,8 @@ from sqlite3 import dbapi2 as sqlite
 datapath = "/home/rsouza/Documentos/Git/MMD/datasets/"
 outputs = "/home/rsouza/Documentos/outputs/"
 
-dbfile1 = "treino.db"
-dbfile2 = "treinoblogs.db"
+dbfile1 = "treino.sqlite"
+dbfile2 = "treinoblogs.sqlite"
 outblog = "blogoutputrss.xml"
 
 db_teste = (outputs+dbfile1)
@@ -423,5 +423,5 @@ if __name__ == '__main__':
     #probabilidades_documentos_bayes()
     #probabilidades_palavras_fisher()
     #probabilidades_documentos_fisher()
-    #using_db_example()
-    classifying_blogs()
+    using_db_example()
+    #classifying_blogs()
