@@ -20,7 +20,7 @@ http://matplotlib.sourceforge.net/
 from numpy import loadtxt, genfromtxt, arange, subtract, linspace
 from matplotlib.pyplot import plot, scatter, boxplot, semilogx, semilogy, loglog, show, title, legend, figure
 from scipy import linspace, polyval, polyfit, sqrt, stats, randn
-from scipy.stats import linregress, describe
+from scipy.stats import linregress, describe, gaussian_kde
 from pylab import hist, movavg
 
 '''Specifying the path to the files'''
@@ -77,16 +77,23 @@ http://matplotlib.sourceforge.net/api/pyplot_api.html#matplotlib.pyplot.loglog''
 
 
 '''Smoothing with moving averages
-http://matplotlib.sourceforge.net/api/mlab_marathon_mapi.html'''
-#scatter(lottery[:,0], lottery[:,1], c='b', marker='+')
+http://matplotlib.sourceforge.net/api/mlab_api.html'''
+#plot(sunspot[:,0], sunspot[:,1])
+#plot(sunspot[7:-7,0], movavg(sunspot[:,1],15), c='g', marker='.', ls='none')
+#title('Sunspot data - smoothing effect')
+
 #figure(2)
-#scatter(lottery[1:-1,0], movavg(lottery[:,1],3), c='r', marker='+')
+#title('Lottery data - raw')
+#scatter(lottery[:,0], lottery[:,1], c='b', marker='+')
 #figure(3)
-#plot(movavg(lottery[:,1],15), c='g', marker='.')
+#scatter(lottery[1:-1,0], movavg(lottery[:,1],3), c='r', marker='+')
+#title('Lottery data - moving avg 3 days')
 #figure(4)
-#plot(movavg(lottery[:,1],33))
+#plot(movavg(lottery[:,1],15), c='g', marker='.')
+#title('Lottery data - moving avg 15 days')
 #figure(5)
-#plot(movavg(lottery[:,1],365))
+#plot(movavg(lottery[:,1],33))
+#title('Lottery data - moving avg 33 days')
 #show()
 
 '''Residuals
@@ -108,36 +115,43 @@ http://www.scipy.org/Cookbook/LinearRegression
 http://en.wikipedia.org/wiki/Linear_regression
 http://en.wikipedia.org/wiki/Polynomial_regression
 '''
-t1 = linspace(1897,2011,len(marathon_m[:,0]))
-t2 = linspace(1960,2011,len(marathon_w[:,0]))
+#t1 = linspace(1897,2011,len(marathon_m[:,0]))
+#t2 = linspace(1960,2011,len(marathon_w[:,0]))
 
-#linear regression 
-(a,b) = polyfit(t1,marathon_m[:,1],1) 
-xm_linear = polyval([a,b],t1)
-(a,b) = polyfit(t2,marathon_w[:,1],1)
-xf_linear = polyval([a,b],t2)
+'''linear regression'''
+#(a,b) = polyfit(t1,marathon_m[:,1],1) 
+#xm_linear = polyval([a,b],t1)
+#(a,b) = polyfit(t2,marathon_w[:,1],1)
+#xf_linear = polyval([a,b],t2)
 
-#regressao with 4th order polynomial
-(a,b,c,d,e) = polyfit(t1,marathon_m[:,1],4) 
-xm_4th = polyval([a,b,c,d,e],t1)
-(a,b,c,d,e) = polyfit(t2,marathon_w[:,1],4)
-xw_4th = polyval([a,b,c,d,e],t2)
+'''plotting the graph(1)'''
+#title('Boston Marathon - yearly best times')
+#scatter(t1, marathon_m[:,1], c='b', marker='o')
+#scatter(t2, marathon_w[:,1], c='g', marker='+')
+#plot(t1, xm_linear,'b.-')
+#plot(t2, xf_linear,'r.-')
+#legend(['Linear Reg M','Linear Reg W','Men','Women'])
+#show()
 
-#plotting the graph(1)
-title('Boston Marathon - yearly best times')
-scatter(t1, marathon_m[:,1], c='b', marker='o')
-scatter(t2, marathon_w[:,1], c='g', marker='+')
-plot(t1, xm_linear,'b.-')
-plot(t2, xf_linear,'r.-')
-legend(['Linear Reg M','Linear Reg W','Men','Women'])
+'''regression with 4th order polynomial'''
+#(a,b,c,d,e) = polyfit(t1,marathon_m[:,1],4) 
+#xm_4th = polyval([a,b,c,d,e],t1)
+#(a,b,c,d,e) = polyfit(t2,marathon_w[:,1],4)
+#xw_4th = polyval([a,b,c,d,e],t2)
 
-#plotting the graph(2)
-figure(2)
-title('Boston Marathon - yearly best times')
-scatter(t1, marathon_m[:,1], c='b', marker='o')
-scatter(t2, marathon_w[:,1], c='g', marker='+')
-plot(t1, xm_4th,'b.-')
-plot(t2, xw_4th,'r.-')
-legend(['4th Pol Reg M','4th Pol Reg W','Men','Women'])
+'''plotting the graph(2)'''
+#figure(2)
+#title('Boston Marathon - yearly best times')
+#scatter(t1, marathon_m[:,1], c='b', marker='o')
+#scatter(t2, marathon_w[:,1], c='g', marker='+')
+#plot(t1, xm_4th,'b.-')
+#plot(t2, xw_4th,'r.-')
+#legend(['4th Pol Reg M','4th Pol Reg W','Men','Women'])
+#show()        
 
-show()        
+'''linear regression in The Draft Lottery case'''
+#scatter(lottery[:,0], lottery[:,1], c='b', marker='+')
+#t1 = linspace(0,365,len(lottery[:,0]))
+#(a,b) = polyfit(t1,lottery[:,1],1) 
+#xm_linear = polyval([a,b],t1)
+#plot(t1, xm_linear,'b.-')
