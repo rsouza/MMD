@@ -31,9 +31,10 @@ outputs = "/home/rsouza/Documentos/outputs/"
 
 dbfile = "searchindex.sqlite"
 db = (outputs+dbfile)
-ignorewords={'the':1,'of':1,'to':1,'and':1,'a':1,'in':1,'is':1,'it':1}
+
 stoplist_en = nltk.corpus.stopwords.words('english')
 stoplist_pt = nltk.corpus.stopwords.words('portuguese')
+ignorewords = stoplist_en + stoplist_pt
 
 '''First block of classes and functions: crawling'''
 
@@ -105,7 +106,7 @@ class crawler:
     def separatewords(self,text):
         '''splits the sentences by the non alpha characters
         and converts all words to lowercase'''
-        splitter=re.compile('\\W*')
+        splitter = re.compile('\\W*', flags=re.U)
         return [s.lower() for s in splitter.split(text) if s != '']
         
     def isindexed(self,url):
@@ -113,7 +114,7 @@ class crawler:
         q = "select rowid from urllist where url='{}'"
         u = self.con.execute(q.format(url)).fetchone()
         if u != None:
-            q = 'select * from wordlocation where urlid={}'
+            q = "select * from wordlocation where urlid={}"
             v = self.con.execute(q.format(u[0])).fetchone()
             if v != None:
                 return True
@@ -231,7 +232,7 @@ class searcher:
         fullquery = 'select {} from {} where {}'.format(fieldlist,tablelist,clauselist)
         cursor = self.con.execute(fullquery)
         rows = [row for row in cursor]
-        return rows,wordids
+        return rows, wordids
 
     def getscoredlist(self,rows,wordids):
         totalscores = dict([(row[0],0) for row in rows])
@@ -251,7 +252,11 @@ class searcher:
         return self.con.execute(q.format(id)).fetchone()[0]
 
     def query(self,q):
-        rows,wordids = self.getmatchrows(q)
+        try:
+            rows,wordids = self.getmatchrows(q)
+        except:
+            print('No results in the database...')
+            return
         scores = self.getscoredlist(rows,wordids)
         rankedscores = [(score,url) for (url,score) in scores.items()]
         rankedscores.sort()
@@ -326,12 +331,12 @@ class searcher:
 
 if __name__ == '__main__':
     '''Defining seed pages'''
-    #seed = ['http://kiwitobes.com/wiki/Categorical_list_of_programming_languages.html']
+    seed = ['http://kiwitobes.com/wiki/Categorical_list_of_programming_languages.html']
     #seed = ['http://www.oglobo.com/']
-    seed = ['http://emap.fgv.br/']
+    #seed = ['http://emap.fgv.br/']
     '''Instantiating the crawler'''
     crawl = crawler(db)
-    '''Creating tables, needed only in the first time'''
+    '''Creating tables - needed only in the first time'''
     crawl.createindextables()
     '''Crawling to a specific depth level'''
     crawl.crawl(seed,1)
@@ -341,3 +346,5 @@ if __name__ == '__main__':
     search = searcher(db)
     '''Querying the index'''
     search.query('python')
+    search.query('emap')
+    search.query('botafogo')
