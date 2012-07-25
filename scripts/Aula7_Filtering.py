@@ -40,8 +40,8 @@ def getwords(doc):
     '''Remove the HTML tags and cleans the feeds files;splits the sentences 
     by the non alpha characters and converts all words to lowercase.
     Ignores bigger and too small words'''
-    #print('Documento -->  {}'.format(doc))
-    splitter=re.compile('\\W*')
+    splitter = re.compile('\\W*', flags=re.U)
+    #splitter=re.compile(r'[^A-Z^a-z]+', flags=re.U)
     words=[s.lower() for s in splitter.split(doc) if len(s)>2 and len(s)<20]
     return dict([(w,1) for w in words])
     
@@ -402,7 +402,7 @@ def using_db_example():
     cl2.setdb(db_teste)
     print('Classifying "quick money": {}'.format(cl2.classify('quick money')))
 
-def classifying_blogs(subject=''):
+def classifying_blogs(subject='python'):
     '''Instantiating a new classifier using "entryfeatures" (for feeds)
     Creating the database for the persistance of training data
     Using blogread with searching feeds option - no file reading'''
@@ -423,5 +423,5 @@ if __name__ == '__main__':
     #probabilidades_documentos_bayes()
     #probabilidades_palavras_fisher()
     #probabilidades_documentos_fisher()
-    using_db_example()
-    #classifying_blogs()
+    #using_db_example()
+    classifying_blogs('fgv')
