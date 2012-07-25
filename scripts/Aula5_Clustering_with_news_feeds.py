@@ -19,7 +19,7 @@ http://nltk.org/
 
 import feedparser
 import re
-from PIL import Image,ImageDraw
+from PIL import Image,ImageDraw, ImageFont
 from math import sqrt
 import random
 import nltk
@@ -28,23 +28,33 @@ import nltk
 datapath = "/home/rsouza/Documentos/Git/MMD/datasets/"
 outputs = "/home/rsouza/Documentos/outputs/"
 
+'''Choosing the list of feeds to capture'''
 listafeeds = ['ch05_feedlist_en.txt', 'ch05_feedlist_br.txt'] 
-saida = "output.txt"
+lfeeds = (datapath+listafeeds[1])
+
+'''Output files'''
+saida = "captured_feeds.txt"
 dendrog1 = "feedclusters.jpg"
 dendrog2 = "wordclusters.jpg"
 g2d1 = "g2dfeeds.jpg"
 g2d2 = "g2dwords.jpg"
 fw_cluster='feeds_words_cluster.txt'
 
-stoplist_en = nltk.corpus.stopwords.words('english')
-stoplist_pt = nltk.corpus.stopwords.words('portuguese')
-lfeeds = (datapath+listafeeds[0])
 fsaida = (outputs+saida)
 dendsaida = (outputs+dendrog1)
 dendsaida2 = (outputs+dendrog2)
 g2dsaida = (outputs+g2d1)
 g2dsaida2 = (outputs+g2d2)
 fwc_saida = (outputs+fw_cluster)
+
+'''Parameters for the PIL Graphs'''
+fontfile = "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf"
+graphfont = ImageFont.truetype(fontfile, 12, encoding='utf-8')
+
+'''Choosing the list of stopwords'''
+stoplist_en = nltk.corpus.stopwords.words('english')
+stoplist_pt = nltk.corpus.stopwords.words('portuguese')
+ignorewords = stoplist_en + stoplist_pt
 
 '''First block of functions - reading and processing the words in blog feeds'''
 
@@ -53,8 +63,8 @@ def getwords(html):
     splits the sentences by the non alpha characters
     and converts all words to lowercase'''
     txt = re.compile(r'<[^>]+>').sub('',html)
-    words = re.compile(ur'[^A-Z^a-z]+').split(txt)
-    return [word.lower() for word in words if word!='']
+    words = re.compile('\\W*', flags=re.U).split(txt)
+    return [word.lower().decode('utf-8') for word in words if word!='']
 
 def getwordcounts(url):
     '''Parse the feed and returns a dictionary with word counts
@@ -68,8 +78,7 @@ def getwordcounts(url):
         else:
             summary = entry.description
         words = getwords(entry.title+' '+summary)
-        #words = [word for word in words if word not in stoplist_en]
-        words = [word for word in words if word not in stoplist_en]
+        words = [word for word in words if word not in ignorewords]
         for word in words:
             wc.setdefault(word,0) #setting default values to zero
             wc[word] += 1 # incrementing every time it occurs
@@ -81,6 +90,7 @@ def getwordcountfeeds(lfeeds, feedlist):
     apcount = {}
     wordcounts = {}
     for feedurl in feedlist:
+        print('Accessing feed {}...').format(feedurl)        
         try:
             title,wc = getwordcounts(feedurl)
             wordcounts[title] = wc
@@ -100,24 +110,24 @@ def neither_common_nor_rare(apcount, feedlist):
         if frac > 0.1 and frac < 0.9: #parameters needs to be adjusted
             wordlist.append(w)
     return wordlist
-    
 
 '''Second block of functions - saving data files to persist data gathered
 and retrieving the data saved for future analysis'''
-
 
 def createoutputfile(wordlist, wordcounts, filename):
     '''Save name of feeds, words and its frequencies.
     Names the heads of the files and separate columns by <tabs>'''
     out = file(filename,'w')
     out.write('Feed')
-    for word in wordlist: out.write('\t%s' % word)
+    for word in wordlist: 
+        out.write('\t{}'.format(word))
     out.write('\n')
     for feed,wc in wordcounts.items():
         print('Processing the feed: {}').format(feed)
         out.write(feed)
         for word in wordlist:
-            if word in wc: out.write('\t%d' % wc[word])
+            if word in wc:
+                out.write('\t{}'.format(wc[word]))
             else: out.write('\t0')
         out.write('\n')
 
@@ -125,11 +135,12 @@ def readfile(filename):
     '''Read the file and formats data'''
     lines = [line for line in file(filename)]
     colnames = lines[0].strip().split('\t')[1:]
+    colnames = [w.decode('utf-8') for w in colnames]
     rownames = []
     data = []
     for line in lines[1:]:
         p = line.strip().split('\t')
-        rownames.append(p[0])
+        rownames.append(p[0].decode('utf-8'))
         data.append([float(x) for x in p[1:]])
     return rownames,colnames,data
 
@@ -211,7 +222,7 @@ def kcluster(rows,distance=pearson,k=6):
     for i in range(len(rows[0]))] for j in range(k)]
     lastmatches=None
     for t in range(100):
-        print 'Iteration %d' % t
+        print('Iteration {}'.format(t))
         bestmatches=[[] for i in range(k)]
         # Find which centroid is the closest for each row
         for j in range(len(rows)):
@@ -269,7 +280,7 @@ def scaledown(data,distance=pearson,rate=0.01):
                 grad[k][1]+=((loc[k][1]-loc[j][1])/fakedist[j][k])*errorterm
                 # Keep track of the total error
                 totalerror+=abs(errorterm)
-        print totalerror
+        print(totalerror)
         # If the answer got worse by moving the points, we are done
         if lasterror and lasterror<totalerror: break
         lasterror=totalerror
@@ -312,7 +323,7 @@ def drawnode(draw,clust,x,y,scaling,labels):
         drawnode(draw,clust.right,x+ll,bottom-h2/2,scaling,labels)
     else:   
         # If this is an endpoint, draw the item label
-        draw.text((x+5,y-7),labels[clust.id],(0,0,0))
+        draw.text((x+5,y-7),labels[clust.id],(0,0,0), font=graphfont)
 
 def drawdendrogram(clust,labels,jpeg='clusters.jpg'):
     # height and width
@@ -335,10 +346,9 @@ def draw2d(data,labels,jpeg='mds2d.jpg'):
     for i in range(len(data)):
         x=(data[i][0]+0.5)*1000
         y=(data[i][1]+0.5)*1000
-        draw.text((x,y),labels[i],(0,0,0))
-    img.save(jpeg,'JPEG')  
-
-
+        '''print(labels[i])'''
+        draw.text((x,y),labels[i],(0,0,0), font=graphfont)
+    img.save(jpeg,'JPEG')
 
 if __name__ == '__main__':
     print('Reading the list of blogs to analyze...')
