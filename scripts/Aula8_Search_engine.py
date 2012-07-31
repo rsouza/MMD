@@ -27,9 +27,9 @@ from sqlite3 import dbapi2 as sqlite
 
 '''Specifying the path to the files'''
 
-outputs = "/home/rsouza/Documentos/outputs/"
+outputs = u"/home/rsouza/Documentos/outputs/"
 
-dbfile = "searchindex.sqlite"
+dbfile = u"searchindex.sqlite"
 db = (outputs+dbfile)
 
 stoplist_en = nltk.corpus.stopwords.words('english')
@@ -49,25 +49,25 @@ class crawler:
         self.con.commit()
 
     def createindextables(self):
-        self.con.execute('create table if not exists urllist(url)')
-        self.con.execute('create table if not exists wordlist(word)')
-        self.con.execute('create table if not exists wordlocation(urlid,wordid,location)')
-        self.con.execute('create table if not exists link(fromid integer,toid integer)')
-        self.con.execute('create table if not exists linkwords(wordid,linkid)')
-        self.con.execute('create index if not exists wordidx on wordlist(word)')
-        self.con.execute('create index if not exists urlidx on urllist(url)')
-        self.con.execute('create index if not exists wordurlidx on wordlocation(wordid)')
-        self.con.execute('create index if not exists urltoidx on link(toid)')
-        self.con.execute('create index if not exists urlfromidx on link(fromid)')
+        self.con.execute(u'create table if not exists urllist(url)')
+        self.con.execute(u'create table if not exists wordlist(word)')
+        self.con.execute(u'create table if not exists wordlocation(urlid,wordid,location)')
+        self.con.execute(u'create table if not exists link(fromid integer,toid integer)')
+        self.con.execute(u'create table if not exists linkwords(wordid,linkid)')
+        self.con.execute(u'create index if not exists wordidx on wordlist(word)')
+        self.con.execute(u'create index if not exists urlidx on urllist(url)')
+        self.con.execute(u'create index if not exists wordurlidx on wordlocation(wordid)')
+        self.con.execute(u'create index if not exists urltoidx on link(toid)')
+        self.con.execute(u'create index if not exists urlfromidx on link(fromid)')
         self.dbcommit()
 
     def getentryid(self, table, field, value, createnew=True):
         '''Add page id to the database, if not present'''
-        q = "select rowid from {} where {}='{}'"
+        q = u"select rowid from {} where {}='{}'"
         cursor = self.con.execute(q.format(table,field,value))
         result = cursor.fetchone()
         if result == None:
-            q = "insert into {} ({}) values ('{}')"
+            q = u"insert into {} ({}) values ('{}')"
             cursor = self.con.execute(q.format(table,field,value))
             return cursor.lastrowid
         else:
@@ -76,9 +76,9 @@ class crawler:
     def addtoindex(self,url,sopa):
         '''Add url to the index if not there'''
         if self.isindexed(url): 
-            print('Page {} already indexed...'.format(url))
+            print(u'Page {} already indexed...'.format(url))
             return
-        print('Indexing: {}'.format(url))
+        print(u'Indexing: {}'.format(url))
         text = self.gettextonly(sopa)
         words = self.separatewords(text)
         urlid = self.getentryid('urllist', 'url', url)
@@ -87,7 +87,7 @@ class crawler:
             if word in ignorewords: 
                 continue
             wordid = self.getentryid('wordlist','word',word)
-            q = "insert into wordlocation (urlid,wordid,location) values ({},{},{})"
+            q = u"insert into wordlocation (urlid,wordid,location) values ({},{},{})"
             self.con.execute(q.format(urlid,wordid,i))
                             
     def gettextonly(self,soup):
@@ -111,10 +111,10 @@ class crawler:
         
     def isindexed(self,url):
         '''Verify whether url is already indexed'''
-        q = "select rowid from urllist where url='{}'"
+        q = u"select rowid from urllist where url='{}'"
         u = self.con.execute(q.format(url)).fetchone()
         if u != None:
-            q = "select * from wordlocation where urlid={}"
+            q = u"select * from wordlocation where urlid={}"
             v = self.con.execute(q.format(u[0])).fetchone()
             if v != None:
                 return True
@@ -123,52 +123,52 @@ class crawler:
     def addlinkref(self,urlFrom,urlTo,linkText):
         '''Add a link between two pages'''
         words = self.separatewords(linkText)
-        fromid = self.getentryid('urllist','url', urlFrom)
-        toid = self.getentryid('urllist','url', urlTo)
+        fromid = self.getentryid(u'urllist',u'url', urlFrom)
+        toid = self.getentryid(u'urllist',u'url', urlTo)
         if fromid == toid:
             return
-        q = "insert into link(fromid,toid) values ({},{})"
+        q = u"insert into link(fromid,toid) values ({},{})"
         cursor = self.con.execute(q.format(fromid,toid))
         linkid = cursor.lastrowid
         for word in words:
             if word in ignorewords: 
                 continue
-            wordid = self.getentryid('wordlist','word', word)
-            q = "insert into linkwords(linkid,wordid) values ({},{})"
+            wordid = self.getentryid(u'wordlist',u'word', word)
+            q = u"insert into linkwords(linkid,wordid) values ({},{})"
             self.con.execute(q.format(linkid,wordid))
     
     def crawl(self,pages,depth=1):
         '''Starts indexing seed page(s), goes indexing all pages following
         breadth first, until the desired depth'''
-        print('Seed URL(s)')        
+        print(u'Seed URL(s)')        
         for p in pages: print(p)
-        print('\nIndexing from seed with depth of {}\n'.format(depth))
+        print(u'\nIndexing from seed with depth of {}\n'.format(depth))
         for i in range(depth+1):
             newpages = {}
             for page in pages:
                 try:
                     c = urllib2.urlopen(page)
                 except:
-                    print('Could not access page: {}'.format(page))
+                    print(u'Could not access page: {}'.format(page))
                     continue
                 try:
                     p = c.read()
                     soup = BeautifulSoup(p)
                     self.addtoindex(page,soup)
-                    links = soup('a')
+                    links = soup(u'a')
                     for link in links:
-                        if ('href' in dict(link.attrs)):
-                            url = urljoin(page,link['href'])
-                            if url.find("'") != -1:
+                        if (u'href' in dict(link.attrs)):
+                            url = urljoin(page,link[u'href'])
+                            if url.find(u"'") != -1:
                                 continue
-                            url = url.split('#')[0]  #Keeps base url
-                            if url[0:4] == 'http' and not self.isindexed(url):
+                            url = url.split(u'#')[0]  #Keeps base url
+                            if url[0:4] == u'http' and not self.isindexed(url):
                                 newpages[url] = 1
                             linkText = self.gettextonly(link)
                             self.addlinkref(page,url,linkText)
                     self.dbcommit()
                 except:
-                    print("Could not parse page {}".format(page))
+                    print(u"Could not parse page {}".format(page))
                     raise
             self.dbcommit()
             pages = newpages
@@ -176,25 +176,25 @@ class crawler:
     def calculatepagerank(self,iterations=20):
         '''Initialize each url with pagerank = 1, and iterates until
         it reaches the limit. Calculates pagerank with damping factor'''
-        self.con.execute('drop table if exists pagerank')
+        self.con.execute(u'drop table if exists pagerank')
         self.dbcommit()
-        self.con.execute('create table pagerank(urlid primary key,score)')
-        for (urlid,) in self.con.execute('select rowid from urllist'):
-            q = 'insert into pagerank(urlid,score) values ({},1.0)'
+        self.con.execute(u'create table pagerank(urlid primary key,score)')
+        for (urlid,) in self.con.execute(u'select rowid from urllist'):
+            q = u'insert into pagerank(urlid,score) values ({},1.0)'
             self.con.execute(q.format(urlid))
         self.dbcommit()
         for i in range(iterations):
-            print("Iteration {}".format(i))
-            for (urlid,) in self.con.execute('select rowid from urllist'):
+            print(u"Iteration {}".format(i))
+            for (urlid,) in self.con.execute(u'select rowid from urllist'):
                 pr = 0.15
-                q1 = 'select distinct fromid from link where toid = {}'
+                q1 = u'select distinct fromid from link where toid = {}'
                 for (linker,) in self.con.execute(q1.format(urlid)):
-                    q2 = 'select score from pagerank where urlid = {}'
+                    q2 = u'select score from pagerank where urlid = {}'
                     linkingpr = self.con.execute(q2.format(linker)).fetchone()[0]
-                    q3 = 'select count(*) from link where fromid = {}'
+                    q3 = u'select count(*) from link where fromid = {}'
                     linkingcount = self.con.execute(q3.format(linker)).fetchone()[0]
                     pr += 0.85 * (linkingpr/linkingcount)
-                q4 = 'update pagerank set score = {} where urlid = {}'
+                q4 = u'update pagerank set score = {} where urlid = {}'
                 self.con.execute(q4.format(pr,urlid))
             self.dbcommit()
             
@@ -209,27 +209,27 @@ class searcher:
         self.con.close()
 
     def getmatchrows(self,q):
-        fieldlist='w0.urlid'
-        tablelist=''  
-        clauselist=''
+        fieldlist=u'w0.urlid'
+        tablelist=u''  
+        clauselist=u''
         wordids=[]
-        words=q.split(' ')  
+        words=q.split(u' ')  
         tablenumber=0
         for word in words:
-            q = "select rowid from wordlist where word='{}'"
+            q = u"select rowid from wordlist where word='{}'"
             wordrow = self.con.execute(q.format(word)).fetchone()
             if wordrow != None:
                 wordid = wordrow[0]
                 wordids.append(wordid)
                 if tablenumber > 0:
-                    tablelist += ','
-                    clauselist += ' and '
-                    clauselist += 'w{}.urlid=w{}.urlid and '.format(tablenumber-1,tablenumber)
-                fieldlist += ',w{}.location'.format(tablenumber)
-                tablelist += 'wordlocation w{}'.format(tablenumber)   
-                clauselist += 'w{}.wordid={}'.format(tablenumber,wordid)
+                    tablelist += u','
+                    clauselist += u' and '
+                    clauselist += u'w{}.urlid=w{}.urlid and '.format(tablenumber-1,tablenumber)
+                fieldlist += u',w{}.location'.format(tablenumber)
+                tablelist += u'wordlocation w{}'.format(tablenumber)   
+                clauselist += u'w{}.wordid={}'.format(tablenumber,wordid)
                 tablenumber += 1
-        fullquery = 'select {} from {} where {}'.format(fieldlist,tablelist,clauselist)
+        fullquery = u'select {} from {} where {}'.format(fieldlist,tablelist,clauselist)
         cursor = self.con.execute(fullquery)
         rows = [row for row in cursor]
         return rows, wordids
@@ -248,22 +248,22 @@ class searcher:
         return totalscores
 
     def geturlname(self,id):
-        q = "select url from urllist where rowid = {}"
+        q = u"select url from urllist where rowid = {}"
         return self.con.execute(q.format(id)).fetchone()[0]
 
     def query(self,q):
         try:
             rows,wordids = self.getmatchrows(q)
         except:
-            print('No results in the database...')
+            print(u'No results in the database...')
             return
         scores = self.getscoredlist(rows,wordids)
         rankedscores = [(score,url) for (url,score) in scores.items()]
         rankedscores.sort()
         rankedscores.reverse()
-        print('\nResultados para busca por {}:'.format(q))
+        print(u'\nResultados para busca por {}:'.format(q))
         for (score,urlid) in rankedscores[0:10]:
-            print('{}\t{}'.format(score, self.geturlname(urlid)))
+            print(u'{}\t{}'.format(score, self.geturlname(urlid)))
         return wordids,[r[1] for r in rankedscores[0:10]]
 
     def normalizescores(self,scores,smallIsBetter=0):
@@ -303,19 +303,19 @@ class searcher:
 
     def inboundlinkscore(self,rows):
         uniqueurls = dict([(row[0],1) for row in rows])
-        q = 'select count(*) from link where toid = {}'
+        q = u'select count(*) from link where toid = {}'
         inboundcount = dict([(u,self.con.execute(q.format(u)).fetchone()[0]) for u in uniqueurls])   
         return self.normalizescores(inboundcount)
 
     def linktextscore(self,rows,wordids):
         linkscores = dict([(row[0],0) for row in rows])
         for wordid in wordids:
-            q = 'select link.fromid,link.toid from linkwords,'
-            q += 'link where wordid={} and linkwords.linkid=link.rowid'
+            q = u'select link.fromid,link.toid from linkwords,'
+            q += u'link where wordid={} and linkwords.linkid=link.rowid'
             cursor = self.con.execute(q.format(wordid))
             for (fromid,toid) in cursor:
                 if toid in linkscores:
-                    q = 'select score from pagerank where urlid={}'
+                    q = u'select score from pagerank where urlid={}'
                     pr=self.con.execute(q.format(fromid)).fetchone()[0]
                     linkscores[toid] += pr
         maxscore = max(linkscores.values())
@@ -323,7 +323,7 @@ class searcher:
         return normalizedscores
 
     def pagerankscore(self,rows):
-        q = 'select score from pagerank where urlid={}'
+        q = u'select score from pagerank where urlid={}'
         pageranks=dict([(row[0],self.con.execute(q.format(row[0])).fetchone()[0]) for row in rows])
         maxrank = max(pageranks.values())
         normalizedscores = dict([(u,float(l)/maxrank) for (u,l) in pageranks.items()])
@@ -331,9 +331,9 @@ class searcher:
 
 if __name__ == '__main__':
     '''Defining seed pages'''
-    seed = ['http://kiwitobes.com/wiki/Categorical_list_of_programming_languages.html']
-    #seed = ['http://www.oglobo.com/']
-    #seed = ['http://emap.fgv.br/']
+    seed = [u'http://kiwitobes.com/wiki/Categorical_list_of_programming_languages.html']
+    #seed = [u'http://www.oglobo.com/']
+    #seed = [u'http://emap.fgv.br/']
     '''Instantiating the crawler'''
     crawl = crawler(db)
     '''Creating tables - needed only in the first time'''
@@ -345,6 +345,6 @@ if __name__ == '__main__':
     '''Instantiating the searcher'''
     search = searcher(db)
     '''Querying the index'''
-    search.query('python')
-    search.query('emap')
-    search.query('botafogo')
+    search.query(u'python')
+    search.query(u'emap')
+    search.query(u'botafogo')
