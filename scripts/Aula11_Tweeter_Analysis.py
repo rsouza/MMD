@@ -96,14 +96,14 @@ def search_for_term(termo):
     for i in range(len(search_results)):
         for j in range(len(search_results[i])):
             tweets.append(search_results[i][j])
-    tweets_txt += [str(tweet.text).split(' ') for tweet in tweets]
+    tweets_txt += [tweet.text.split(u' ') for tweet in tweets]
     for i in range(len(tweets)):
-        tweets_words += [word.lower().strip(':@&$!?') for word in tweets_txt[i]]
+        tweets_words += [word.lower().strip(u':@&$!?') for word in tweets_txt[i]]
     for i in range(len(tweets)): 
-        names += [word.strip(':@&$!?') for word in tweets_txt[i] if word.istitle() and len(word) > 2]
+        names += [word.strip(u':@&$!?') for word in tweets_txt[i] if word.istitle() and len(word) > 2]
     out = file(pathtweetsfile,'w')
     for tweet in tweets_txt: 
-        out.write('\n{}'.format(tweet))
+        out.write(u'\n{}'.format(tweet))
     return tweets, tweets_txt, tweets_words, names
 
 def get_rt_origins(tweet):
@@ -337,9 +337,9 @@ def sentiment_analysis(texto, goodwords, badwords):
     '''
     goodness = 0
     badness = 0    
-    for word in listabom:
+    for word in goodwords:
         goodness += percentage(texto.count(word.lower()), len(texto))
-    for word in listamal:
+    for word in badwords:
         badness += percentage(texto.count(word.lower()), len(texto))
     print 'Grau de negatividade: {}'.format(badness)
     print 'Grau de positividade: {}'.format(goodness)
@@ -374,7 +374,7 @@ if __name__ == '__main__':
     print([u.text for u in userfriendstimeline])
 
     '''Using our customized function that retrieves 5 x 100 tweets'''
-    tweets, tweets_txt, tweets_words, names = search_for_term('London')          
+    tweets, tweets_txt, tweets_words, names = search_for_term(u'London')          
     
     print('Word count: {}'.format(len(tweets_words)))
     print('Repertoire: {}'.format(len(set(tweets_words))))
@@ -450,7 +450,7 @@ if __name__ == '__main__':
     freq_names.plot(20)
 
     '''Sentiment Analysis'''
-    sentiment_analysis(tweets_words, lista_positiva, lista_negativa)
+    sentiment_analysis(tweets_words, goodwords, badwords)
     
     '''
     Graphs
