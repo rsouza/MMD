@@ -337,9 +337,9 @@ def sentiment_analysis(texto, goodwords, badwords):
     '''
     goodness = 0
     badness = 0    
-    for word in listabom:
+    for word in goodwords:
         goodness += percentage(texto.count(word.lower()), len(texto))
-    for word in listamal:
+    for word in badwords:
         badness += percentage(texto.count(word.lower()), len(texto))
     print 'Grau de negatividade: {}'.format(badness)
     print 'Grau de positividade: {}'.format(goodness)
