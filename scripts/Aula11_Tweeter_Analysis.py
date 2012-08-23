@@ -8,7 +8,7 @@ Disciplina: Modelagem e Mineracao de Dados
 Course: Data Mining and Modeling
 
 Professor: Renato Rocha Souza
-Topic: Twitter Analysis (class #11)
+Topic: Twitter Analysis and Visualization (class #11)
 
 Information on the Python Packages used:
 http://code.google.com/p/python-twitter/
