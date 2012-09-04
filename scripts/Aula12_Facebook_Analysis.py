@@ -58,10 +58,9 @@ http://www.facebook.com/developers
 Application must be autorized in:
 http://developers.facebook.com/docs/authentication/
 '''
-
-AppID = ''
-AppSecret = ''
-ACCESS_TOKEN = ''
+#AppID = ''
+#AppSecret = ''
+#ACCESS_TOKEN = ''
 SiteURL = 'http://miningthesocialweb.appspot.com/static/facebook_oauth_helper.html'
 LIMIT = 100
 
@@ -70,16 +69,10 @@ LIMIT = 100
 templates = "/home/rsouza/Documentos/Git/MMD/templates/"
 outputs = "/home/rsouza/Documentos/outputs/"
 
-#current = os.getcwd()
-#if not os.path.isdir('outputs'): os.mkdir('outputs')
-#outputs = os.path.join(current, 'outputs')
-#f = open(os.path.join(os.getcwd(), 'out', 'jit', 'sunburst', OUT), 'w')
-#if not os.path.isdir('out'): os.mkdir('out')
-#filename = os.path.join('outputs', 'facebook.spreadsheet.csv')
-
-tagcloud_template = 'template_tagcloud.html'
-sunburst_template = 'template_sunburst.html'
-rgraph_template = 'template_rgraph.html'
+tagcloud = 'template_tagcloud.html'
+sunburst = 'template_sunburst.html'
+rgraph = 'template_rgraph.html'
+token = 'token_fb.txt'
 
 graphhtml = 'fb_amigos.html'
 graphhtmlgroup = 'fb_amigos_group.html'
@@ -88,9 +81,9 @@ graphsun = 'fb_amigos_sun.html'
 graphcloud = 'fb_tag_cloud.html'
 csvfile = 'fb_amigos.csv'
 
-tagcloudtemplate = (templates+tagcloud_template)
-sunbursttemplate = (templates+sunburst_template)
-rgraphtemplate = (templates+rgraph_template)
+tagcloudtemplate = (templates+tagcloud)
+sunbursttemplate = (templates+sunburst)
+rgraphtemplate = (templates+rgraph)
 
 rgraphfile = (outputs+graphhtml)
 rgraphfile2 = (outputs+graphhtmlgroup)
@@ -98,6 +91,7 @@ dumpjson = (outputs+graphjson)
 sungraphfile = (outputs+graphsun)
 graphcloudfile = (outputs+graphcloud)
 spreadsheet = (outputs+csvfile)
+facebook_token = (outputs+token)
 
 def login():
     '''
@@ -162,10 +156,10 @@ def login():
                 scope=','.join(EXTENDED_PERMS), type='user_agent', display='popup')
     webbrowser.open('https://www.facebook.com/dialog/oauth?'+ urllib.urlencode(args))
     access_token = raw_input('Enter your access_token: ')
-    os.path.walk(outputs)
-    if not os.path.isdir('out'): os.mkdir('out')
-    filename = os.path.join('out', 'facebook.access_token')
-    f = open(filename, 'w')
+    #os.path.walk(outputs)
+    #if not os.path.isdir('out'): os.mkdir('out')
+    #filename = os.path.join('out', 'facebook.access_token')
+    f = open(facebook_token, 'w')
     f.write(access_token)
     f.close()
     print >> sys.stderr, "Access token stored to local file: 'out/facebook.access_token'"
@@ -337,7 +331,7 @@ def generate_rgraph_friends_bygroup():
     # Display groups and prompt the user
     for i in range(len(groups['data'])):
         print '%s) %s' %(i, groups['data'][i]['name'])
-    choice = int(raw_input('Escolha um dos grupos para o grafico: '))
+    choice = int(raw_input('Choose a group for your graphic: '))
     gid = groups['data'][choice]['id']
     # Find the friends in the group
     fql = FQL(ACCESS_TOKEN)
@@ -359,13 +353,12 @@ def generate_rgraph_friends_bygroup():
     # Open up the web page in your browser
     #webbrowser.open('file://' + f.name)
     
-def gera_sungraph_friends():
+def generate_sungraph_friends():
     # Uses the previously saved JSON file
     data = json.loads(open(dumpjson).read())
     # Define colors to be used in the visualization
     # for aesthetics
     colors = ['#FF0000', '#00FF00', '#0000FF']
-
     # The primary output to collect input
     jit_output = {
         'id': 'friends',
@@ -413,7 +406,7 @@ def gera_sungraph_friends():
 def weightTermByFreq(f, minfr,maxfr,minfo,maxfo):
     return (f - minfr) * (maxfo - minfo) / (maxfr - minfr) + minfo
 
-def gera_tag_cloud():
+def generate_tag_cloud():
     '''
     Implementation adapted from:
     http://help.com/post/383276-anyone-knows-the-formula-for-font-s
@@ -455,7 +448,7 @@ def gera_tag_cloud():
     # Open up the web page in your browser
     # webbrowser.open('file://' + os.path.join(os.getcwd(), graphcloudfile))
 
-def gera_planilha_friends():    
+def generate_planilha_friends():    
     # Reuses out/facebook.friends.json written out by 
     # facebook__get_friends_rgraph.py
     data = json.loads(open(dumpjson).read())
@@ -471,49 +464,52 @@ def gera_planilha_friends():
         
 if __name__ == '__main__':
     #ACCESS_TOKEN = login()
-    login()
-    gapi = facebook.GraphAPI(ACCESS_TOKEN)
+    #login()
+    #gapi = facebook.GraphAPI(ACCESS_TOKEN)
     
     '''Querying with Graph API
-    http://developers.facebook.com/tools/explorer/'''
-    find_groups('FGV')
-
+    http://developers.facebook.com/tools/explorer/    
+    https://developers.facebook.com/docs/reference/api/
+    http://www.lynda.com/Facebook-tutorials/Building-Facebook-Applications-with-HTML-JavaScript/93082-2.html'''
+    
     '''Queries com FQL
     http://developers.facebook.com/docs/reference/fql/'''
+    #First query example
     fqlquery0 = "select name, sex, relationship_status from user WHERE uid = me()"    
-    
+
+    #Second query example
     fqlquery1 = "select first_name, last_name, birthday from user WHERE uid IN \
     (select uid1 FROM friend WHERE uid2 = me())"  
-    
+
+    #Third query example
     fqlquery2 = "select name, sex, relationship_status from user where uid in \
     (select target_id from connection where source_id = me() and target_type = 'user')"
-    #Exemplo de multiquery FQL    
     
+    #Fourth (Multi) Query Example    
     fqlquery3 = """{"name_sex_relationships" : "select name, sex, relationship_status from user \
     where uid in (select target_id from #ids)","ids" : "select target_id from connection \
     where source_id = me() and target_type = 'user'"}"""
-    
+
     fqlquery4 = "select target_id from connection where source_id = me() and target_type = 'user'"
 
-    results = fql_queries(fqlquery4) #choose your query number or modify one
-    print(json.dumps(result, indent=4))
+    #results = fql_queries(fqlquery4) #choose your query number or modify one
+    #print(json.dumps(results, indent=4))
 
     #my_friends_names = [str(t['first_name']+' '+str(t['last_name'])) for t in fql_queries(fqlquery1)]
-    #my_friends_names = set(my_friends_names) #ordenar
-
     #my_friends_ids = [str(t['target_id']) for t in fql_queries(fqlquery4)]
-    #fqlquery5 = "select uid1, uid2 from friend where uid1 in (%s) and uid2 in (%s)" \
-    #%(",".join(my_friends_ids), ",".join(my_friends_ids),)
+
+    fqlquery5 = "select uid1, uid2 from friend where uid1 in (%s) and uid2 in (%s)" \
+    %(",".join(my_friends_ids), ",".join(my_friends_ids),)
     #mutual_friendships = fql_queries(fqlquery5)
     
-    #fqlquery6 = "select uid, first_name, last_name, sex from user where uid in (%s)" \
-    #%(",".join(my_friends_ids),)
+    fqlquery6 = "select uid, first_name, last_name, sex from user where uid in (%s)" \
+    %(",".join(my_friends_ids),)
     #names = dict([(unicode(u["uid"]), u["first_name"] + " " +u["last_name"][0] + ".") for u in fql_queries(fqlquery6)])
     
     
     #friendships, names, sexes, mutual_friendships = graph_friends()
-    #gera_rgraph_friends(friendships,names)
-    #gera_sungraph_friends()
-    #gera_rgraph_friends_bygroup()
-    gera_tag_cloud()
-    #gera_planilha_friends()
+    #generate_rgraph_friends(friendships,names)
+    #generate_sungraph_friends()
+    #generate_rgraph_friends_bygroup()
+    #generate_tag_cloud()
+    #generate_planilha_friends()
