@@ -19,7 +19,6 @@ Code adapted from:
     blogs_and_nlp__extract_interactions.py
     blogs_and_nlp__extract_interactions_markedup_output.py
 
-
 Information on the Python Packages used:
 http://docs.python.org/library/os
 http://docs.python.org/library/sys.html
@@ -29,7 +28,6 @@ http://code.google.com/p/feedparser/
 http://numpy.scipy.org/
 http://www.crummy.com/software/BeautifulSoup/
 http://nltk.org/
-
 '''
 import os
 import sys
@@ -41,18 +39,29 @@ from BeautifulSoup import BeautifulStoneSoup
 import nltk
 from nltk import clean_html, ingrams, FreqDist
 
+'''Specifying the path to the files'''
 
-datapath = "/home/rsouza/Dropbox/Renato/Python/MMD/NLP/"
+datapath = "/home/rsouza/Documentos/Git/MMD/datasets/"
+templates = "/home/rsouza/Documentos/Git/MMD/templates/"
+outputs = "/home/rsouza/Documentos/outputs/"
+
+lfeeds = 'ch13_blogs_scm.txt'
 jfile = 'feed.json'
-mfile = 'summaryfeed.html'
-jsonfile = (datapath+jfile)
-markedhtmlfile = (datapath+mfile)
-feed_url = 'http://feeds.feedburner.com/oreilly/radar/atom'
-#feed_url = 'http://feeds2.feedburner.com/zdnet/hardware'
+sfile = 'summaryfeed.html'
+ifile = 'interact.html'
 
-stop_words = nltk.corpus.stopwords.words('english')
-ignore_words = [".",",","--","'s","?",")","(",":","'","'re",'"',"-","}","{"]
-ignorelist = stop_words+ignore_words
+feed_urls = (datapath+lfeeds)
+jsonfile = (outputs+jfile)
+marked_htmlfile = (outputs+sfile)
+interactions_htmlfile = (outputs+ifile)
+
+feed_url = 'http://feeds2.feedburner.com/zdnet/hardware'
+
+'''Choosing the list of stopwords'''
+stoplist_en = nltk.corpus.stopwords.words('english')
+stoplist_pt = nltk.corpus.stopwords.words('portuguese')
+ignore_signs = [".",",","--","'s","?",")","(",":","'","'re",'"',"-","}","{"]
+ignorelist = stoplist_en + stoplist_pt + ignore_signs
 
 HTML_TEMPLATE = """<html>
     <head>
@@ -66,10 +75,9 @@ def cleanHtml(html):
     return BeautifulStoneSoup(clean_html(html),
                               convertEntities=BeautifulStoneSoup.HTML_ENTITIES).contents[0]
 
-
 def get_feed(feed):
-    fp = feedparser.parse(feed_url)
-    print "Recuperadas %s entradas de '%s'" % (len(fp.entries[0].title), fp.feed.title)
+    fp = feedparser.parse(feed)
+    print "%s entries retrieved from feed '%s'" % (len(fp.entries[0].title), fp.feed.title)
     blog_posts = []
     for e in fp.entries:
         blog_posts.append({'title': e.title, 'content'
@@ -77,7 +85,7 @@ def get_feed(feed):
     f = open(jsonfile, 'w')
     f.write(json.dumps(blog_posts))
     f.close()
-    print >> sys.stderr, 'Conteudo salvo em: %s' % (f.name, )
+    print >> sys.stderr, 'Content saved in: %s' % (f.name, )
 
 def sentence_detection():
     blog_data = json.loads(open(jsonfile).read())    
@@ -90,7 +98,7 @@ def sentence_detection():
         num_words = sum([i[1] for i in fdist.items()])
         num_unique_words = len(fdist.keys())
         # Hapaxes are words that appear only once
-        num_hapaxes = len(fdist.hapaxes()) #palavras que so aparecem uma vez
+        num_hapaxes = len(fdist.hapaxes())
         top_10_words_sans_stop_words = [w for w in fdist.items() if w[0]
                                         not in ignorelist][:10]
         print post['title']
@@ -148,8 +156,8 @@ def score_sentences(sentences, important_words):
     return scores
 
 def summarize(txt):
-    TOP_SENTENCES = 5  # Numero de sentencas a escolher no sumario "top n"
-    N = 100  # Numero de palavras a considerar
+    TOP_SENTENCES = 5  # Number of sentences to choose on "top n"
+    N = 100  # Number of words to consider
     sentences = [s for s in nltk.tokenize.sent_tokenize(txt)]
     normalized_sentences = [s.lower() for s in sentences]
     words = [w.lower() for sentence in normalized_sentences for w in
@@ -158,15 +166,15 @@ def summarize(txt):
     top_n_words = [w[0] for w in fdist.items() 
             if w[0] not in nltk.corpus.stopwords.words('english')][:N]
     scored_sentences = score_sentences(normalized_sentences, top_n_words)
-    # Primeira abordagem: 
+    # First approach:
     # Filter out non-significant sentences by using the average score plus a
     # fraction of the std dev as a filter
     avg = numpy.mean([s[1] for s in scored_sentences])
     std = numpy.std([s[1] for s in scored_sentences])
     mean_scored = [(sent_idx, score) for (sent_idx, score) in scored_sentences
                    if score > avg + 0.5 * std]
-    # Segunda abordagem: 
-    # Another approach would be to return only the top N ranked sentences
+    # Second Approach: 
+    # Return only the top N ranked sentences
     top_n_scored = sorted(scored_sentences, key=lambda s: s[1])[-TOP_SENTENCES:]
     top_n_scored = sorted(top_n_scored, key=lambda s: s[0])
     # Decorate the post object with summaries
@@ -192,8 +200,8 @@ def show_summaries():
         print
 
 def save_html_summaries():
-    if not os.path.isdir('out/summarize'):
-        os.makedirs('out/summarize')
+    #if not os.path.isdir('out/summarize'):
+    #    os.makedirs('out/summarize')
     blog_data = json.loads(open(jsonfile).read())    
     for post in blog_data:
         post.update(summarize(post['content']))
@@ -204,13 +212,13 @@ def save_html_summaries():
             for s in post[summary_type]:
                 post[summary_type + '_marked_up'] = \
                 post[summary_type + '_marked_up'].replace(s, '<strong>%s</strong>' % (s, ))
-            filename = post['title'] + '.summary.' + summary_type + '.html'
-            f = open(os.path.join('out', 'summarize', filename), 'w')
-            #f = open(markedhtmlfile, 'w')
+            #filename = post['title'] + '.summary.' + summary_type + '.html'
+            #f = open(os.path.join('out', 'summarize', filename), 'w')
+            f = open(marked_htmlfile, 'w')
             html = HTML_TEMPLATE % (post['title'] + ' Summary', post[summary_type + '_marked_up'],)
             f.write(html.encode('utf-8'))
             f.close()
-            print >> sys.stderr, "Conteudo salvo em: ", f.name
+            print >> sys.stderr, "Content saved in: ", f.name
 
 def extract_entities():
     blog_data = json.loads(open(jsonfile).read())
@@ -287,8 +295,8 @@ def show_interactions():
 
 def save_html_interactions():
     blog_data = json.loads(open(jsonfile).read())
-    if not os.path.isdir('out/interactions'):
-        os.makedirs('out/interactions')
+    #if not os.path.isdir('out/interactions'):
+    #    os.makedirs('out/interactions')
     for post in blog_data:
         post.update(extract_interactions(post['content']))
         # Display output as markup with entities presented in bold text
@@ -298,16 +306,19 @@ def save_html_interactions():
             for (term, _) in post['entity_interactions'][sentence_idx]:
                 s = s.replace(term, '<strong>%s</strong>' % (term, ))
             post['markup'] += [s]
-        filename = post['title'] + '.entity_interactions.html'
-        f = open(os.path.join('out', 'interactions', filename), 'w')
+        #filename = post['title'] + '.entity_interactions.html'
+        #f = open(os.path.join('out', 'interactions', filename), 'w')
+        f = open(interactions_htmlfile, 'w')
         html = HTML_TEMPLATE % (post['title'] + ' Interactions', ' '.join(post['markup']),)
         f.write(html.encode('utf-8'))
         f.close()
-        print >> sys.stderr, "Conteudo salvo em: ", f.name
+        print >> sys.stderr, "Content saved in: ", f.name
 
 if __name__ == '__main__':
-    get_feed(feed_url)
-    sentence_detection()
+    print('Reading the list of blogs to analyze...')
+    feedlist=[line for line in file(feed_urls)]
+    get_feed(feedlist[0])
+    #sentence_detection()
     #show_summaries()
     #save_html_summaries()
     #extract_entities()
