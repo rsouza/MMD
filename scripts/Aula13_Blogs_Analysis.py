@@ -29,6 +29,7 @@ http://numpy.scipy.org/
 http://www.crummy.com/software/BeautifulSoup/
 http://nltk.org/
 '''
+
 import os
 import sys
 from datetime import datetime as dt
@@ -47,13 +48,9 @@ outputs = "/home/rsouza/Documentos/outputs/"
 
 lfeeds = 'ch13_blogs_scm.txt'
 jfile = 'feed.json'
-sfile = 'summaryfeed.html'
-ifile = 'interact.html'
 
 feed_urls = (datapath+lfeeds)
 jsonfile = (outputs+jfile)
-marked_htmlfile = (outputs+sfile)
-interactions_htmlfile = (outputs+ifile)
 
 feed_url = 'http://feeds2.feedburner.com/zdnet/hardware'
 
@@ -65,10 +62,10 @@ ignorelist = stoplist_en + stoplist_pt + ignore_signs
 
 HTML_TEMPLATE = """<html>
     <head>
-        <title>%s</title>
+        <title>{}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     </head>
-    <body>%s</body>
+    <body>{}</body>
 </html>"""
 
 def cleanHtml(html):
@@ -77,7 +74,7 @@ def cleanHtml(html):
 
 def get_feed(feed):
     fp = feedparser.parse(feed)
-    print "%s entries retrieved from feed '%s'" % (len(fp.entries[0].title), fp.feed.title)
+    print "{} entries retrieved from feed '{}'".format(len(fp.entries[0].title), fp.feed.title)
     blog_posts = []
     for e in fp.entries:
         blog_posts.append({'title': e.title, 'content'
@@ -85,7 +82,7 @@ def get_feed(feed):
     f = open(jsonfile, 'w')
     f.write(json.dumps(blog_posts))
     f.close()
-    print >> sys.stderr, 'Content saved in: %s' % (f.name, )
+    print >> sys.stderr, 'Content saved in: %s'.format(f.name, )
 
 def sentence_detection():
     blog_data = json.loads(open(jsonfile).read())    
@@ -107,8 +104,8 @@ def sentence_detection():
         print '\tNum Unique Words:'.ljust(25), num_unique_words
         print '\tNum Hapaxes:'.ljust(25), num_hapaxes
         print '\tTop 10 Most Frequent Words (sans stop words):\n\t\t', \
-                '\n\t\t'.join(['%s (%s)'
-                % (w[0], w[1]) for w in top_10_words_sans_stop_words])
+                '\n\t\t'.join(['{} ({})'.format \
+                (w[0], w[1]) for w in top_10_words_sans_stop_words])
         print
 
 def score_sentences(sentences, important_words):
@@ -200,22 +197,19 @@ def show_summaries():
         print
 
 def save_html_summaries():
-    #if not os.path.isdir('out/summarize'):
-    #    os.makedirs('out/summarize')
     blog_data = json.loads(open(jsonfile).read())    
     for post in blog_data:
         post.update(summarize(post['content']))
         # You could also store a version of the full post with key sentences markedup
         # for analysis with simple string replacement...
         for summary_type in ['top_n_summary', 'mean_scored_summary']:
-            post[summary_type + '_marked_up'] = '<p>%s</p>' % (post['content'], )
+            post[summary_type + '_marked_up'] = '<p>{}</p>'.format(post['content'], )
             for s in post[summary_type]:
                 post[summary_type + '_marked_up'] = \
-                post[summary_type + '_marked_up'].replace(s, '<strong>%s</strong>' % (s, ))
-            #filename = post['title'] + '.summary.' + summary_type + '.html'
-            #f = open(os.path.join('out', 'summarize', filename), 'w')
-            f = open(marked_htmlfile, 'w')
-            html = HTML_TEMPLATE % (post['title'] + ' Summary', post[summary_type + '_marked_up'],)
+                post[summary_type + '_marked_up'].replace(s, '<strong>{}</strong>'.format(s, ))
+            filename = post['title'] + '.summary.' + summary_type + '.html'
+            f = open(outputs+filename, 'w')
+            html = HTML_TEMPLATE.format(post['title'] + ' Summary', post[summary_type + '_marked_up'],)
             f.write(html.encode('utf-8'))
             f.close()
             print >> sys.stderr, "Content saved in: ", f.name
@@ -254,7 +248,7 @@ def extract_entities():
         proper_nouns = []
         for (entity, pos) in post['entities']:
             if entity.istitle():
-                print '\t%s (%s)' % (entity, post['entities'][(entity, pos)])
+                print '\t{} ({})'.format(entity, post['entities'][(entity, pos)])
         print
 
 def extract_interactions(txt):
@@ -295,8 +289,6 @@ def show_interactions():
 
 def save_html_interactions():
     blog_data = json.loads(open(jsonfile).read())
-    #if not os.path.isdir('out/interactions'):
-    #    os.makedirs('out/interactions')
     for post in blog_data:
         post.update(extract_interactions(post['content']))
         # Display output as markup with entities presented in bold text
@@ -304,12 +296,11 @@ def save_html_interactions():
         for sentence_idx in range(len(post['sentences'])):
             s = post['sentences'][sentence_idx]
             for (term, _) in post['entity_interactions'][sentence_idx]:
-                s = s.replace(term, '<strong>%s</strong>' % (term, ))
+                s = s.replace(term, '<strong>%s</strong>'.format(term, ))
             post['markup'] += [s]
-        #filename = post['title'] + '.entity_interactions.html'
-        #f = open(os.path.join('out', 'interactions', filename), 'w')
-        f = open(interactions_htmlfile, 'w')
-        html = HTML_TEMPLATE % (post['title'] + ' Interactions', ' '.join(post['markup']),)
+        filename = post['title'] + '.entity_interactions.html'
+        f = open(outputs+filename, 'w')
+        html = HTML_TEMPLATE.format(post['title'] + ' Interactions', ' '.join(post['markup']),)
         f.write(html.encode('utf-8'))
         f.close()
         print >> sys.stderr, "Content saved in: ", f.name

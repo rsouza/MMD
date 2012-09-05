@@ -58,7 +58,7 @@ http://www.facebook.com/developers
 Application must be autorized in:
 http://developers.facebook.com/docs/authentication/
 '''
-#AppID = ''
+AppID = '177321632342035' #Substitute for your own application ID
 #AppSecret = ''
 #ACCESS_TOKEN = ''
 SiteURL = 'http://miningthesocialweb.appspot.com/static/facebook_oauth_helper.html'
@@ -156,13 +156,10 @@ def login():
                 scope=','.join(EXTENDED_PERMS), type='user_agent', display='popup')
     webbrowser.open('https://www.facebook.com/dialog/oauth?'+ urllib.urlencode(args))
     access_token = raw_input('Enter your access_token: ')
-    #os.path.walk(outputs)
-    #if not os.path.isdir('out'): os.mkdir('out')
-    #filename = os.path.join('out', 'facebook.access_token')
     f = open(facebook_token, 'w')
     f.write(access_token)
     f.close()
-    print >> sys.stderr, "Access token stored to local file: 'out/facebook.access_token'"
+    print >> sys.stderr, "Access token stored to local file: {}".format(facebook_token)
     return access_token
 
 def find_groups(query):
@@ -256,11 +253,11 @@ def graph_friends():
     mutual_friendships = []
     N = 50
     for i in range(len(my_friends) / N + 1):
-        q = 'select uid1, uid2 from friend where uid1 in (%s) and uid2 in (%s)' \
-        %(','.join(my_friends), ','.join(my_friends[i * N:(i + 1) * N]))
+        q = 'select uid1, uid2 from friend where uid1 in ({}) and uid2 in ({})'.format \
+            (','.join(my_friends), ','.join(my_friends[i * N:(i + 1) * N]))
         mutual_friendships += fql.query(q)   
-    q = 'select uid, first_name, last_name, sex from user where uid in (%s)' \
-    % (','.join(my_friends), )
+    q = 'select uid, first_name, last_name, sex from user where uid in ({})'.format \
+        (','.join(my_friends), )
     results = fql.query(q)
     names = dict([(unicode(u['uid']), u['first_name'] + ' ' + u['last_name'][0] + '.'
              ) for u in results])
@@ -335,8 +332,8 @@ def generate_rgraph_friends_bygroup():
     gid = groups['data'][choice]['id']
     # Find the friends in the group
     fql = FQL(ACCESS_TOKEN)
-    q = """select uid from group_member where gid = %s and uid in (select target_id\
-    from connection where source_id = me() and target_type = 'user')"""%(gid, )
+    q = """select uid from group_member where gid = {} and uid in (select target_id\
+    from connection where source_id = me() and target_type = 'user')""".format(gid, )
     uids = [u['uid'] for u in fql.query(q)]
     # Filter the previously generated output for these ids
     filtered_rgraph = [n for n in rgraph if n['id'] in uids]
@@ -448,7 +445,7 @@ def generate_tag_cloud():
     # Open up the web page in your browser
     # webbrowser.open('file://' + os.path.join(os.getcwd(), graphcloudfile))
 
-def generate_planilha_friends():    
+def generate_spreadsheet_friends():    
     # Reuses out/facebook.friends.json written out by 
     # facebook__get_friends_rgraph.py
     data = json.loads(open(dumpjson).read())
@@ -463,9 +460,13 @@ def generate_planilha_friends():
     print('Data exported to file: {}'.format(f.name))
         
 if __name__ == '__main__':
-    #ACCESS_TOKEN = login()
-    #login()
-    #gapi = facebook.GraphAPI(ACCESS_TOKEN)
+    try:
+        with open(facebook_token, 'r') as tk:
+            ACCESS_TOKEN = tk.read().strip()
+    except:
+        ACCESS_TOKEN = login()
+        
+    gapi = facebook.GraphAPI(ACCESS_TOKEN)
     
     '''Querying with Graph API
     http://developers.facebook.com/tools/explorer/    
@@ -492,24 +493,21 @@ if __name__ == '__main__':
 
     fqlquery4 = "select target_id from connection where source_id = me() and target_type = 'user'"
 
-    #results = fql_queries(fqlquery4) #choose your query number or modify one
-    #print(json.dumps(results, indent=4))
+    results = fql_queries(fqlquery4) #choose your query number or modify one
+    print(json.dumps(results, indent=4))
 
-    #my_friends_names = [str(t['first_name']+' '+str(t['last_name'])) for t in fql_queries(fqlquery1)]
-    #my_friends_ids = [str(t['target_id']) for t in fql_queries(fqlquery4)]
+    my_friends_names = [str(t['first_name']+' '+str(t['last_name'])) for t in fql_queries(fqlquery1)]
+    my_friends_ids = [str(t['tagenerate_spreadsheet_friendsrget_id']) for t in fql_queries(fqlquery4)]
 
-    fqlquery5 = "select uid1, uid2 from friend where uid1 in (%s) and uid2 in (%s)" \
-    %(",".join(my_friends_ids), ",".join(my_friends_ids),)
-    #mutual_friendships = fql_queries(fqlquery5)
+    fqlquery5 = "select uid1, uid2 from friend where uid1 in ({}) and uid2 in ({})".format(",".join(my_friends_ids), ",".join(my_friends_ids))
+    mutual_friendships = fql_queries(fqlquery5)
     
-    fqlquery6 = "select uid, first_name, last_name, sex from user where uid in (%s)" \
-    %(",".join(my_friends_ids),)
-    #names = dict([(unicode(u["uid"]), u["first_name"] + " " +u["last_name"][0] + ".") for u in fql_queries(fqlquery6)])
+    fqlquery6 = "select uid, first_name, last_name, sex from user where uid in ({})".format(",".join(my_friends_ids),)
+    names = dict([(unicode(u["uid"]), u["first_name"] + " " +u["last_name"][0] + ".") for u in fql_queries(fqlquery6)])
     
-    
-    #friendships, names, sexes, mutual_friendships = graph_friends()
-    #generate_rgraph_friends(friendships,names)
-    #generate_sungraph_friends()
-    #generate_rgraph_friends_bygroup()
-    #generate_tag_cloud()
-    #generate_planilha_friends()
+    friendships, names, sexes, mutual_friendships = graph_friends()
+    generate_rgraph_friends(friendships,names)
+    generate_sungraph_friends()
+    generate_tag_cloud()
+    generate_spreadsheet_friends()
+    generate_rgraph_friends_bygroup()
