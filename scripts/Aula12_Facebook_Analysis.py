@@ -475,37 +475,46 @@ if __name__ == '__main__':
     
     '''Queries com FQL
     http://developers.facebook.com/docs/reference/fql/'''
-    #First query example
+    print('First query example')
     fqlquery0 = "select name, sex, relationship_status from user WHERE uid = me()"    
 
-    #Second query example
+    print('Second query example')
     fqlquery1 = "select first_name, last_name, birthday from user WHERE uid IN \
     (select uid1 FROM friend WHERE uid2 = me())"  
 
-    #Third query example
+    print('Third query example')
     fqlquery2 = "select name, sex, relationship_status from user where uid in \
     (select target_id from connection where source_id = me() and target_type = 'user')"
     
-    #Fourth (Multi) Query Example    
+    print('Fourth (Multi) Query Example')    
     fqlquery3 = """{"name_sex_relationships" : "select name, sex, relationship_status from user \
     where uid in (select target_id from #ids)","ids" : "select target_id from connection \
     where source_id = me() and target_type = 'user'"}"""
 
+    print('Fifth Query Example')  
     fqlquery4 = "select target_id from connection where source_id = me() and target_type = 'user'"
 
+    print('Chosen Query - Results')  
     results = fql_queries(fqlquery4) #choose your query number or modify one
     print(json.dumps(results, indent=4))
 
-    my_friends_names = [str(t['first_name']+' '+str(t['last_name'])) for t in fql_queries(fqlquery1)]
-    my_friends_ids = [str(t['tagenerate_spreadsheet_friendsrget_id']) for t in fql_queries(fqlquery4)]
+    print('Friends names')
+    my_friends_names = [unicode(t['first_name']+' '+unicode(t['last_name'])) for t in fql_queries(fqlquery1)]
 
+    print('Friends IDs')  
+    my_friends_ids = [unicode(t['target_id']) for t in fql_queries(fqlquery4)]
+
+    print('Mutual Friendships')  
     fqlquery5 = "select uid1, uid2 from friend where uid1 in ({}) and uid2 in ({})".format(",".join(my_friends_ids), ",".join(my_friends_ids))
     mutual_friendships = fql_queries(fqlquery5)
-    
+
+    print('Mutual Friendships - more information')      
     fqlquery6 = "select uid, first_name, last_name, sex from user where uid in ({})".format(",".join(my_friends_ids),)
     names = dict([(unicode(u["uid"]), u["first_name"] + " " +u["last_name"][0] + ".") for u in fql_queries(fqlquery6)])
-    
+
+    print('Querying...')  
     friendships, names, sexes, mutual_friendships = graph_friends()
+    print('Generating Graphs...')  
     generate_rgraph_friends(friendships,names)
     generate_sungraph_friends()
     generate_tag_cloud()
