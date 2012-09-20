@@ -62,7 +62,7 @@ AppID = '177321632342035' #Substitute for your own application ID
 #AppSecret = ''
 #ACCESS_TOKEN = ''
 SiteURL = 'http://miningthesocialweb.appspot.com/static/facebook_oauth_helper.html'
-LIMIT = 100
+LIMIT = 10
 
 '''Specifying the path to the files'''
 
@@ -409,10 +409,10 @@ def generate_tag_cloud():
     http://help.com/post/383276-anyone-knows-the-formula-for-font-s
     '''
     BASE_URL = 'https://graph.facebook.com/me/home?access_token='
-    NUM_PAGES = 10
-    MIN_FREQUENCY = 2
+    NUM_PAGES = 5
+    MIN_FREQUENCY = 1
     MIN_FONT_SIZE = 3
-    MAX_FONT_SIZE = 30
+    MAX_FONT_SIZE = 20
     # Loop through the pages of connection data and build up messages
     url = BASE_URL + ACCESS_TOKEN
     messages = []
@@ -505,7 +505,7 @@ if __name__ == '__main__':
     my_friends_ids = [unicode(t['target_id']) for t in fql_queries(fqlquery4)]
 
     print('Mutual Friendships')  
-    fqlquery5 = "select uid1, uid2 from friend where uid1 in ({}) and uid2 in ({})".format(",".join(my_friends_ids), ",".join(my_friends_ids))
+    fqlquery5 = "select uid1, uid2 from friend where uid1 in ({}) and uid2 in ({})".format(",".join(my_friends_ids),",".join(my_friends_ids))
     mutual_friendships = fql_queries(fqlquery5)
 
     print('Mutual Friendships - more information')      
@@ -517,6 +517,8 @@ if __name__ == '__main__':
     print('Generating Graphs...')  
     generate_rgraph_friends(friendships,names)
     generate_sungraph_friends()
-    generate_tag_cloud()
     generate_spreadsheet_friends()
     generate_rgraph_friends_bygroup()
+
+    print('Generating Tag_Cloud...')      
+    generate_tag_cloud()
