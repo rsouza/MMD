@@ -237,7 +237,7 @@ def fql_queries(fqlquery):
 
 def graph_friends():
     '''
-    Now get friendships amongst your friends. note that this api appears to return 
+    Now get friendships amongst your friends. Note that this api appears to return 
     arbitrarily truncated results if you pass in more than a couple hundred friends 
     into each part of the query, so we perform (num friends)/N queries and aggregate 
     the results to try and get complete results
@@ -251,7 +251,7 @@ def graph_friends():
     q = "select target_id from connection where source_id = me() and target_type ='user'"
     my_friends = [str(t['target_id']) for t in fql.query(q)]
     mutual_friendships = []
-    N = 50
+    N = 100
     for i in range(len(my_friends) / N + 1):
         q = 'select uid1, uid2 from friend where uid1 in ({}) and uid2 in ({})'.format \
             (','.join(my_friends), ','.join(my_friends[i * N:(i + 1) * N]))
@@ -265,7 +265,8 @@ def graph_friends():
     # consolidate a map of connection info about your friends.
     friendships = {}
     for f in mutual_friendships:
-        (uid1, uid2) = (unicode(f['uid1']), unicode(f['uid2']))
+        #(uid1, uid2) = (unicode(f['uid1']), unicode(f['uid2']))
+        (uid1, uid2) = (str(f['uid1']), str(f['uid2']))
         try: name1 = names[uid1]
         except KeyError, e:
             name1 = 'Unknown'
