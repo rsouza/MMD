@@ -44,10 +44,10 @@ from nltk import clean_html, ingrams, FreqDist
 
 datapath = "/home/rsouza/Documentos/Git/MMD/datasets/"
 templates = "/home/rsouza/Documentos/Git/MMD/templates/"
-outputs = "/home/rsouza/Documentos/outputs/"
+outputs = "/home/rsouza/Documentos/outputs/blogs/"
 
 lfeeds = 'ch13_blogs_scm.txt'
-jfile = 'feed.json'
+jfile = 'blogfeeds.json'
 
 feed_urls = (datapath+lfeeds)
 jsonfile = (outputs+jfile)
@@ -296,22 +296,25 @@ def save_html_interactions():
         for sentence_idx in range(len(post['sentences'])):
             s = post['sentences'][sentence_idx]
             for (term, _) in post['entity_interactions'][sentence_idx]:
-                s = s.replace(term, '<strong>%s</strong>'.format(term, ))
+                s = s.replace(term, '<strong>{}</strong>'.format(term, ))
             post['markup'] += [s]
-        filename = post['title'] + '.entity_interactions.html'
+        filename = post['title'] + '.interactions.html'
         f = open(outputs+filename, 'w')
         html = HTML_TEMPLATE.format(post['title'] + ' Interactions', ' '.join(post['markup']),)
         f.write(html.encode('utf-8'))
         f.close()
-        print >> sys.stderr, "Content saved in: ", f.name
+        print >> sys.stderr, "Content saved in: {}".format(f.name)
 
 if __name__ == '__main__':
     print('Reading the list of blogs to analyze...')
     feedlist=[line for line in file(feed_urls)]
-    get_feed(feedlist[0])
-    #sentence_detection()
-    #show_summaries()
-    #save_html_summaries()
-    #extract_entities()
-    #show_interactions()
-    #save_html_interactions()
+    for i in range(len(feedlist)):
+        print('Processing feed {} ({}/{})').format(feedlist[i],
+                                            i+1,len(feedlist)+1)
+        get_feed(feedlist[i])
+        sentence_detection()
+        show_summaries()
+        save_html_summaries()
+        extract_entities()
+        show_interactions()
+        save_html_interactions()
