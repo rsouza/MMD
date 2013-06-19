@@ -30,7 +30,7 @@ dataset1 = "ch02_presidents"
 dataset2 = "ch02_serverdata"
 dataset3 = "ch02_glass.data"
 
-'''Some information on the datasets'''
+'''Gathering some information on the datasets'''
 def bstats(vec):
     s = {'num_element':len(vec), 'minimo':vec.min(),
          'maximo':vec.max(), 'media':vec.mean(),
