@@ -17,11 +17,11 @@ http://scipy.org/
 http://matplotlib.sourceforge.net/
 '''
 
-from numpy import loadtxt, arange, subtract, linspace, concatenate, zeros_like
+from numpy import loadtxt, arange, subtract, linspace, concatenate, zeros_like, mean
 from matplotlib.pyplot import plot, scatter, boxplot, semilogx, semilogy, loglog, show, title, legend, figure
 from scipy import polyval, polyfit, sqrt, stats, randn
 from scipy.stats import linregress, describe
-from scipy.signal import gaussian, convolve, mean, correlate
+from scipy.signal import gaussian, convolve, correlate
 from pylab import hist, movavg, datestr2num
 
 '''Specifying the path to the files'''
