@@ -1,0 +1,5 @@
+http://rss.terra.com.br/0,,EI1,00.xml
+http://wsj.com/xml/rss/3_7480.xml
+http://feeds.feedburner.com/noticiasveja
+http://www.bbc.co.uk/portuguese/index.xml
+http://news.google.com.br/news?pz=1&cf=all&ned=pt-BR_br&hl=pt-BR&topic=h&num=3&output=rss
