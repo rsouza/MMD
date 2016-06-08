@@ -22,8 +22,8 @@
     <div class="field field-type-text field-field-docente">
       <div class="field-items"> </div>
     </div>
-    <img longdesc="Logo" title="Illustration" alt="Logo" src="http://2012.bedreinnovation.dk/sites/default/files/Datamining_0.png"><br>
     <br>
+    <img longdesc="Logo" title="Illustration" alt="Logo" src="http://2012.bedreinnovation.dk/sites/default/files/Datamining_0.png"><br>
     <br>
     <hr style="width: 100%; height: 2px;">
     <ul>
