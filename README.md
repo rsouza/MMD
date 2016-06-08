@@ -33,12 +33,13 @@
 <li>Dean Abbott. <a href="http://www.amazon.com/Applied-Predictive-Analytics-Principles-Professional/dp/1118727967">Applied Predictive Analytics: Principles and Techniques for the Professional Data Analyst</a><br /></li>
 </ul><span style="color: rgb(0, 0, 153);"></span>
 
-<li style="color: rgb(0, 0, 153);">Software (ecossistema Python)<br /></li>
+<li style="color: rgb(0, 0, 153);">Software (ecossistema Python)<br/></li>
 <ul style="color: rgb(0, 0, 153);">
 <li><a href="http://continuum.io/downloads">Anaconda (Ambiente Python no Windows / Mac)</a></li>
-<li><a href="http://ipython.org/">Ipython</a> (Para Linux)</li>
+<li><a href="http://jupyter.org/">Jupyter Notebook (antigo Ipython)</a> (Para Linux)</li>
 <li><a href="https://pypi.python.org/pypi/pip">Python PIP</a> (facilita a instalação de pacotes)<br/></li>
-<li style="color: rgb(0, 0, 153);">Documentação<br/></li>
+<li style="color: rgb(0, 0, 153);">Pacotes Adicionais<br/></li>
+<ul style="color: rgb(0, 0, 153);">
 <li style="color: rgb(0, 0, 153);"><a href="http://docs.python.org/index.html">The Python Tutorial</a></li>
 <li style="color: rgb(0, 0, 153);"><a href="http://pandas.pydata.org/">Python Pandas</a></li>
 <li style="color: rgb(0, 0, 153);"><a href="http://matplotlib.sourceforge.net/index.html">Python Mathplotlib</a></li>
