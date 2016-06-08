@@ -32,8 +32,8 @@
 <li><span class="nolink">Anand Rajaraman, Jeff Ullman. <a href="http://i.stanford.edu/~ullman/mmds.html">Mining of Massive Datasets</a></span> (v1.1)</li>
 <li>Dean Abbott. <a href="http://www.amazon.com/Applied-Predictive-Analytics-Principles-Professional/dp/1118727967">Applied Predictive Analytics: Principles and Techniques for the Professional Data Analyst</a><br /></li>
 </ul><span style="color: rgb(0, 0, 153);"></span>
-
-<li style="color: rgb(0, 0, 153);">Software (ecossistema Python)<br/></li>
+<ul>
+<li style="color: rgb(0, 0, 153);">Software (ecossistema Python)</li>
 <ul style="color: rgb(0, 0, 153);">
 <li><a href="http://continuum.io/downloads">Anaconda (Ambiente Python no Windows / Mac)</a></li>
 <li><a href="http://jupyter.org/">Jupyter Notebook (antigo Ipython)</a> (Para Linux)</li>
