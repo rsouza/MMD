@@ -12,7 +12,7 @@
 <div class="field field-type-text field-field-docente">
 <div class="field-items"> </div> </div>
 </td>
-<td width="50%" valign="top" style="text-align: center;"><img vspace="0" hspace="0" border="0" title="Data Mining" alt="Data Mining" src="$@FILEPHP@$$@SLASH@$datamining.jpg" style="width: 269px; height: 244px;" /><br />
+<td width="50%" valign="top" style="text-align: center;"><img vspace="0" hspace="0" border="0" title="Data Mining" alt="Data Mining" src="http://socialmedialab.upenn.edu/sites/default/files/uploads/images/DataMining.jpg" style="width: 269px; height: 244px;" /><br />
 </td>
 </tr></tbody>
 </table><br /><hr style="width: 100%; height: 2px;" />
