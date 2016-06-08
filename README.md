@@ -17,7 +17,7 @@
 </tr></tbody>
 </table><br /><hr style="width: 100%; height: 2px;" />
 <ul>
-<li style="color: rgb(0, 0, 153);"><a href="http://emap.fgv.br/pos-graduacao/disciplina/modelagem-mineracao-dados.html">Programa da Disciplina</a></li><span style="color: rgb(0, 0, 153);"> </span>
+<li style="color: rgb(0, 0, 153);"><a href="http://emap.fgv.br/disciplina/mestrado/modelagem-mineracao-de-dados">Programa da Disciplina</a></li><span style="color: rgb(0, 0, 153);"> </span>
 <li style="color: rgb(0, 0, 153);">Recursos Didáticos</li><span style="color: rgb(0, 0, 153);"> </span>
 <ul>
 <li style="color: rgb(0, 0, 153);">Bibliografia</li>
