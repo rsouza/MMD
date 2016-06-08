@@ -4,35 +4,33 @@
   </head>
   <body>
     <h3 style="font-weight: bold; font-family: arial,helvetica,sans-serif;" class="with-tabs">Modelagem
-      e Mineração de Dados</h3>
+      e MineraÃ§Ã£o de Dados</h3>
     <span style="font-family: arial,helvetica,sans-serif;">Docente: </span><a style="font-family: arial,helvetica,sans-serif;"
       href="http://emap.fgv.br/pessoas/renato.souza">Renato Rocha Souza</a> <br
       style="font-family: arial,helvetica,sans-serif;">
     <br style="font-family: arial,helvetica,sans-serif;">
     <div style="font-family: arial,helvetica,sans-serif;" class="field field-type-text field-field-objetivo">
       <div class="field-item odd">Objetivo: <br>
-        Desenvolver processos de aquisição, armazenamento, manipulação,
-        visualização e análise de dados em múltiplos contextos e ambiente<span style="text-decoration: underline;">s,
-          </span>ressaltando-se os aspectos teóricos e práticos. <br>
-        Possui aportes da estatística, da linguística computacional, da ciência
-        da computação, ciência da informação e ciência dos dados.<br>
+        Desenvolver processos de aquisiÃ§Ã£o, armazenamento, manipulaÃ§Ã£o,
+        visualizaÃ§Ã£o e anÃ¡lise de dados em mÃºltiplos contextos e ambiente<span style="text-decoration: underline;">s,
+          </span>ressaltando-se os aspectos teÃ³ricos e prÃ¡ticos. <br>
+        Possui aportes da estatÃ­stica, da linguÃ­stica computacional, da ciÃªncia
+        da computaÃ§Ã£o, ciÃªncia da informaÃ§Ã£o e ciÃªncia dos dados.<br>
       </div>
       <div class="field-items"> </div>
     </div>
     <div class="field field-type-text field-field-docente">
       <div class="field-items"> </div>
     </div>
+    <br>
     <img longdesc="Logo" title="Illustration" alt="Logo" src="http://2012.bedreinnovation.dk/sites/default/files/Datamining_0.png"><br>
-    <br>
-    <br>
-    <br>
     <br>
     <hr style="width: 100%; height: 2px;">
     <ul>
       <li style="color: rgb(0, 0, 153);"><a href="http://emap.fgv.br/disciplina/mestrado/modelagem-mineracao-de-dados">Programa
           da Disciplina</a></li>
       <span style="color: rgb(0, 0, 153);"> </span>
-      <li style="color: rgb(0, 0, 153);">Recursos Did<span style="font-family: arial,helvetica,sans-serif;">á</span>ticos</li>
+      <li style="color: rgb(0, 0, 153);">Recursos Did<span style="font-family: arial,helvetica,sans-serif;">Ã¡</span>ticos</li>
       <span style="color: rgb(0, 0, 153);"> </span>
       <ul>
         <li style="color: rgb(0, 0, 153);">Bibliografia</li>
@@ -62,7 +60,7 @@
           <li><a href="http://jupyter.org/">Jupyter Notebook (antigo Ipython)</a>
             (Para Linux)</li>
           <li><a href="https://pypi.python.org/pypi/pip">Python PIP</a>
-            (facilita a instalação de pacotes)</li>
+            (facilita a instalaÃ§Ã£o de pacotes)</li>
           <li><a href="http://docs.python.org/index.html">The Python Tutorial</a></li>
         </ul>
         <li style="color: rgb(0, 0, 153);">Pacotes Python Adicionais</li>
@@ -111,7 +109,7 @@
           <li><a href="http://www.graphviz.org/">GraphViz</a></li>
           <li><a href="https://code.google.com/p/re2/">RE2</a></li>
           <li><a href="http://git-scm.com/">Git</a></li>
-          <li><a href="https://try.github.io/">Documenta<span style="color: #000099;">çã</span>o:
+          <li><a href="https://try.github.io/">Documenta<span style="color: #000099;">Ã§Ã£</span>o:
               usando github</a></li>
         </ul>
       </ul>
