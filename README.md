@@ -83,6 +83,10 @@
           <li><a href="http://code.google.com/p/feedparser/">Python FeedParser</a></li>
           <li><a href="http://www.crummy.com/software/BeautifulSoup/">Python
               Beautiful Soup</a></li>
+          <li><a href="https://web.stanford.edu/~mwaskom/software/seaborn/">Python
+              Seaborn</a></li>
+          <li><a href="https://pypi.python.org/pypi/xlrd">Python
+              XLRD (Excel Reader)</a></li>
           <li><a href="https://pypi.python.org/pypi/PyMySQL">Python pymysql</a></li>
           <li><a href="http://zetcode.com/db/sqlitepythontutorial/">Python
               SQLite</a></li>
