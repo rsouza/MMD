@@ -17,8 +17,10 @@
 </tr></tbody>
 </table><br /><hr style="width: 100%; height: 2px;" />
 <ul>
-<li style="color: rgb(0, 0, 153);"><a href="http://emap.fgv.br/disciplina/mestrado/modelagem-mineracao-de-dados">Programa da Disciplina</a></li><span style="color: rgb(0, 0, 153);"> </span>
-<li style="color: rgb(0, 0, 153);">Recursos Didáticos</li><span style="color: rgb(0, 0, 153);"> </span>
+<li style="color: rgb(0, 0, 153);"><a href="http://emap.fgv.br/disciplina/mestrado/modelagem-mineracao-de-dados">Programa da Disciplina</a></li>
+<span style="color: rgb(0, 0, 153);"> </span>
+<li style="color: rgb(0, 0, 153);">Recursos Didáticos</li>
+<span style="color: rgb(0, 0, 153);"> </span>
 <ul>
 <li style="color: rgb(0, 0, 153);">Bibliografia</li>
 <ul style="color: rgb(0, 0, 153);">
@@ -30,14 +32,13 @@
 <li><span class="nolink">Anand Rajaraman, Jeff Ullman. <a href="http://i.stanford.edu/~ullman/mmds.html">Mining of Massive Datasets</a></span> (v1.1)</li>
 <li>Dean Abbott. <a href="http://www.amazon.com/Applied-Predictive-Analytics-Principles-Professional/dp/1118727967">Applied Predictive Analytics: Principles and Techniques for the Professional Data Analyst</a><br /></li>
 </ul><span style="color: rgb(0, 0, 153);"></span>
+
 <li style="color: rgb(0, 0, 153);">Software (ecossistema Python)<br /></li>
 <ul style="color: rgb(0, 0, 153);">
 <li><a href="http://continuum.io/downloads">Anaconda (Ambiente Python no Windows / Mac)</a></li>
 <li><a href="http://ipython.org/">Ipython</a> (Para Linux)</li>
 <li><a href="https://pypi.python.org/pypi/pip">Python PIP</a> (facilita a instalação de pacotes)<br/></li>
-</ul>
-<li style="color: rgb(0, 0, 153);">Documentação</li>
-<ul>
+<li style="color: rgb(0, 0, 153);">Documentação<br/></li>
 <li style="color: rgb(0, 0, 153);"><a href="http://docs.python.org/index.html">The Python Tutorial</a></li>
 <li style="color: rgb(0, 0, 153);"><a href="http://pandas.pydata.org/">Python Pandas</a></li>
 <li style="color: rgb(0, 0, 153);"><a href="http://matplotlib.sourceforge.net/index.html">Python Mathplotlib</a></li>
@@ -62,18 +63,14 @@
 <li><a href="https://docs.python.org/2/library/re.html">Python RE</a> / <a href="https://pypi.python.org/pypi/re2/">Python RE2</a></li>
 <li><a href="https://github.com/NAMD/topicmodeling">Topicmodelling</a></li>
 <li><a href="http://docs.python-requests.org/en/latest/">Python Requests</a><br /></li>
-</ul>
-<li>Outros Softwares<br /></li>
-<ul>
+<li>Outros Softwares<br/></li>
 <li><a href="http://www.cs.waikato.ac.nz/ml/weka/">Weka</a></li>
 <li><a href="http://gate.ac.uk/">Gate</a></li>
 <li><a href="http://gephi.org/">Gephi</a></li>
 <li><a href="http://www.graphviz.org/">GraphViz</a></li>
 <li><a href="https://code.google.com/p/re2/">RE2</a></li>
-<li><a href="http://git-scm.com/">Git</a><br /></li>
-</ul>
+<li><a href="http://git-scm.com/">Git</a><br/></li>
 <li style="color: rgb(0, 0, 153);">Repositório de Código e Datasets</li>
-<ul>
 <li><a href="https://github.com/rsouza/MMD">GitHub MMD</a></li>
 <li><a href="https://try.github.io/">Documentação: usando github</a></li>
 </ul>
