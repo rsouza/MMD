@@ -37,6 +37,7 @@
         <ul style="color: rgb(0, 0, 153);">
           <li>Toby Segaran. <a href="http://oreilly.com/catalog/9780596529321">Programming
               Collective Intelligence</a> O'Reilly Media</li>
+          <li>Wes McKinney. <a href="http://shop.oreilly.com/product/0636920023784.do">Python for Data Analysis</a> O'Reilly Media</li>
           <li>Steven Bird, Ewan Klein, Edward Loper. <a href="http://oreilly.com/catalog/9780596516499/">Natural
               Language Processing with Python</a> O'Reilly Media</li>
           <li>Philipp K. Janert. <a href="http://oreilly.com/catalog/9780596802363/">Data
