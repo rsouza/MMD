@@ -5,19 +5,18 @@
   <body>
     <h3 style="font-weight: bold; font-family: arial,helvetica,sans-serif;" class="with-tabs">Modelagem
       e Mineração de Dados</h3>
-    <span style="font-family: arial,helvetica,sans-serif;">Docente:
-    </span><a style="font-family: arial,helvetica,sans-serif;" href="http://emap.fgv.br/pessoas/renato.souza">Renato
-      Rocha Souza</a>
-    <br style="font-family: arial,helvetica,sans-serif;">
+    <span style="font-family: arial,helvetica,sans-serif;">Docente: </span><a style="font-family: arial,helvetica,sans-serif;"
+      href="http://emap.fgv.br/pessoas/renato.souza">Renato Rocha Souza</a> <br
+      style="font-family: arial,helvetica,sans-serif;">
     <br style="font-family: arial,helvetica,sans-serif;">
     <div style="font-family: arial,helvetica,sans-serif;" class="field field-type-text field-field-objetivo">
       <div class="field-item odd">Objetivo: <br>
-        Nesta disciplina, serão trabalhadas as técnicas de aquisição,
-        processamento, visualização e análise de dados em múltiplos contextos e
-        ambientes,<br>
-        ressaltando-se os aspectos teóricos e práticos. <br>
+        Desenvolver processos de aquisição, armazenamento, manipulação,
+        visualização e análise de dados em múltiplos contextos e ambiente<span style="text-decoration: underline;">s,
+          </span>ressaltando-se os aspectos teóricos e práticos. <br>
         Possui aportes da estatística, da linguística computacional, da ciência
-        da computação, ciência da informação e ciência dos dados.</div>
+        da computação, ciência da informação e ciência dos dados.<br>
+      </div>
       <div class="field-items"> </div>
     </div>
     <div class="field field-type-text field-field-docente">
@@ -63,10 +62,10 @@
           <li><a href="http://jupyter.org/">Jupyter Notebook (antigo Ipython)</a>
             (Para Linux)</li>
           <li><a href="https://pypi.python.org/pypi/pip">Python PIP</a>
-            (facilita a instalaÃ§Ã£o de pacotes)</li>
+            (facilita a instalação de pacotes)</li>
           <li><a href="http://docs.python.org/index.html">The Python Tutorial</a></li>
         </ul>
-        <li style="color: rgb(0, 0, 153);">Pacotes Adicionais</li>
+        <li style="color: rgb(0, 0, 153);">Pacotes Python Adicionais</li>
         <ul style="color: rgb(0, 0, 153);">
           <li style="color: rgb(0, 0, 153);"><a href="http://pandas.pydata.org/">Python
               Pandas</a></li>
@@ -96,7 +95,7 @@
               phylogenetic Tree Exploration</a></li>
           <li><a href="https://pypi.python.org/pypi/pydot2/1.0.32">Pydot2</a></li>
           <li><a href="http://radimrehurek.com/gensim/">Python Gensim</a></li>
-          <li><a href="http://www.pythonware.com/products/pil/">Python PIL</a></li>
+          <li><a href="https://github.com/python-pillow/Pillow">Python Pillow</a></li>
           <li><a href="http://cython.org/">Cython</a></li>
           <li><a href="https://docs.python.org/2/library/re.html">Python RE</a>
             / <a href="https://pypi.python.org/pypi/re2/">Python RE2</a></li>
@@ -112,9 +111,8 @@
           <li><a href="http://www.graphviz.org/">GraphViz</a></li>
           <li><a href="https://code.google.com/p/re2/">RE2</a></li>
           <li><a href="http://git-scm.com/">Git</a></li>
-          <li style="color: rgb(0, 0, 153);">RepositÃ³rio de CÃ³digo e Datasets</li>
-          <li><a href="https://github.com/rsouza/MMD">GitHub MMD</a></li>
-          <li><a href="https://try.github.io/">DocumentaÃ§Ã£o: usando github</a></li>
+          <li><a href="https://try.github.io/">Documenta<span style="color: #000099;">çã</span>o:
+              usando github</a></li>
         </ul>
       </ul>
     </ul>
