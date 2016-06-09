@@ -12,10 +12,11 @@
     <div style="font-family: arial,helvetica,sans-serif;" class="field field-type-text field-field-objetivo">
       <div class="field-item odd">Objetivo: <br>
         Desenvolver processos de aquisição, armazenamento, manipulação,
-        visualização e análise de dados em múltiplos contextos e ambiente<span style="text-decoration: underline;">s,
-          </span>ressaltando-se os aspectos teóricos e práticos. <br>
-        Possui aportes da estatística, da linguística computacional, da ciência
-        da computação, ciência da informação e ciência dos dados.<br>
+        visualização e análise de dados em múltiplos contextos e ambiente<span
+          style="text-decoration: underline;">s, </span>ressaltando-se os
+        aspectos teóricos e práticos. <br>
+        Possui aportes da estatística, da linguística computacional, da
+        ciência da computação, ciência da informação e ciência dos dados.<br>
       </div>
       <div class="field-items"> </div>
     </div>
@@ -37,7 +38,8 @@
         <ul style="color: rgb(0, 0, 153);">
           <li>Toby Segaran. <a href="http://oreilly.com/catalog/9780596529321">Programming
               Collective Intelligence</a> O'Reilly Media</li>
-          <li>Wes McKinney. <a href="http://shop.oreilly.com/product/0636920023784.do">Python for Data Analysis</a> O'Reilly Media</li>
+          <li>Wes McKinney. <a href="http://shop.oreilly.com/product/0636920023784.do">Python
+              for Data Analysis</a> O'Reilly Media</li>
           <li>Steven Bird, Ewan Klein, Edward Loper. <a href="http://oreilly.com/catalog/9780596516499/">Natural
               Language Processing with Python</a> O'Reilly Media</li>
           <li>Philipp K. Janert. <a href="http://oreilly.com/catalog/9780596802363/">Data
@@ -64,8 +66,6 @@
             (facilita a instalação de pacotes)</li>
           <li><a href="http://docs.python.org/index.html">The Python Tutorial</a></li>
           <li><a href="http://git-scm.com/">Tutorial Git</a></li>
-          <li><a href="https://try.github.io/">Documenta<span style="color: #000099;">çã</span>o:
-              usando github</a></li>
         </ul>
         <li style="color: rgb(0, 0, 153);">Pacotes Python Adicionais</li>
         <ul style="color: rgb(0, 0, 153);">
@@ -87,10 +87,10 @@
           <li><a href="http://code.google.com/p/feedparser/">Python FeedParser</a></li>
           <li><a href="http://www.crummy.com/software/BeautifulSoup/">Python
               Beautiful Soup</a></li>
-          <li><a href="https://web.stanford.edu/~mwaskom/software/seaborn/">Python
+          <li><a href="https://web.stanford.edu/%7Emwaskom/software/seaborn/">Python
               Seaborn</a></li>
-          <li><a href="https://pypi.python.org/pypi/xlrd">Python
-              XLRD (Excel Reader)</a></li>
+          <li><a href="https://pypi.python.org/pypi/xlrd">Python XLRD (Excel
+              Reader)</a></li>
           <li><a href="https://pypi.python.org/pypi/PyMySQL">Python pymysql</a></li>
           <li><a href="http://zetcode.com/db/sqlitepythontutorial/">Python
               SQLite</a></li>
