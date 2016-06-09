@@ -63,6 +63,9 @@
           <li><a href="https://pypi.python.org/pypi/pip">Python PIP</a>
             (facilita a instalação de pacotes)</li>
           <li><a href="http://docs.python.org/index.html">The Python Tutorial</a></li>
+          <li><a href="http://git-scm.com/">Tutorial Git</a></li>
+          <li><a href="https://try.github.io/">Documenta<span style="color: #000099;">çã</span>o:
+              usando github</a></li>
         </ul>
         <li style="color: rgb(0, 0, 153);">Pacotes Python Adicionais</li>
         <ul style="color: rgb(0, 0, 153);">
@@ -113,9 +116,6 @@
           <li><a href="http://gephi.org/">Gephi</a></li>
           <li><a href="http://www.graphviz.org/">GraphViz</a></li>
           <li><a href="https://code.google.com/p/re2/">RE2</a></li>
-          <li><a href="http://git-scm.com/">Git</a></li>
-          <li><a href="https://try.github.io/">Documenta<span style="color: #000099;">çã</span>o:
-              usando github</a></li>
         </ul>
       </ul>
     </ul>
