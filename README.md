@@ -72,7 +72,7 @@
           <li style="color: rgb(0, 0, 153);"><a href="http://pandas.pydata.org/">Python
               Pandas</a></li>
           <li style="color: rgb(0, 0, 153);"><a href="http://matplotlib.sourceforge.net/index.html">Python
-              Mathplotlib</a></li>
+              Matplotlib</a></li>
           <li style="color: rgb(0, 0, 153);"><a href="http://numpy.scipy.org/">Python
               Numpy</a></li>
           <li style="color: rgb(0, 0, 153);"><a href="http://www.scipy.org/">Python
