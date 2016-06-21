@@ -72,14 +72,16 @@
           <li style="color: rgb(0, 0, 153);"><a href="http://pandas.pydata.org/">Python
               Pandas</a></li>
           <li style="color: rgb(0, 0, 153);"><a href="http://matplotlib.sourceforge.net/index.html">Python
-              Mathplotlib</a></li>
+              Matplotlib</a></li>
+          <li><a href="https://web.stanford.edu/%7Emwaskom/software/seaborn/">Python
+              Seaborn</a></li>
           <li style="color: rgb(0, 0, 153);"><a href="http://numpy.scipy.org/">Python
               Numpy</a></li>
           <li style="color: rgb(0, 0, 153);"><a href="http://www.scipy.org/">Python
               Scipy</a></li>
           <li style="color: rgb(0, 0, 153);"><a href="http://www.scipy.org/PyLab">Pylab</a></li>
           <li><a href="http://statsmodels.sourceforge.net/devel/index.html#">Python
-              StatsModel</a></li>
+              StatsModels</a></li>
           <li><a href="http://scikit-learn.org/stable/">Python Scikit Learn</a></li>
           <li><a href="http://www.nltk.org/" style="color: rgb(0, 0, 153);">Python
               NLTK</a></li>
@@ -87,8 +89,6 @@
           <li><a href="http://code.google.com/p/feedparser/">Python FeedParser</a></li>
           <li><a href="http://www.crummy.com/software/BeautifulSoup/">Python
               Beautiful Soup</a></li>
-          <li><a href="https://web.stanford.edu/%7Emwaskom/software/seaborn/">Python
-              Seaborn</a></li>
           <li><a href="https://pypi.python.org/pypi/xlrd">Python XLRD (Excel
               Reader)</a></li>
           <li><a href="https://pypi.python.org/pypi/PyMySQL">Python pymysql</a></li>
