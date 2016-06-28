@@ -1,14 +1,14 @@
-Exercícios com o Weka
+## Exercícios com o Weka
 
-- Abra o Weka
-***************************************
-- Escolha o módulo "Explorer"
+1. Abra o Weka
+
+2. Escolha o módulo "Explorer"
 - Carregue o arquivo "bank.arff" - este arquivo descreve o perfil de correntistas que aderiram ou não ao produto "PEP"
 - Explore os dados no "explorer"
 - Visualize os dados com a opção "Edit" do Explorer
 - Varie as classes (quadrante inferior direito) e explore a opção "Visualize All"
-***************************************
-- Vá para o módulo "Classify"
+
+3. Vá para o módulo "Classify"
 - Monte uma árvore de decisão usando o algoritmo "J48"
 - Escolha "Use training set"
 - CLique em "Start"
@@ -16,8 +16,8 @@ Exercícios com o Weka
 - Examine os perfis de correntistas que adotaram o produto.
 	- O que se pode dizer do produto em relação ao número de filhos?
 	- E em relação ao salário (income)?
-***************************************
-- Vá para o módulo "Cluster"
+
+4. Vá para o módulo "Cluster"
 - Monte uma árvore de decisão usando o algoritmo "SimpleKMeans"
 - Configure o algoritmo para que sejam encontrados 4 clusters (Configure clicando em cima do nome do algoritmo em "Choose")
 - Escolha "Use training set"
@@ -31,32 +31,32 @@ Exercícios com o Weka
 							  Varie o parâmetro em "Colour" e verifique outros critérios de formação de clusters.
 	- Experimente X:Income, Colour:Sex e Y:PEP.  ---> Qual gênero com alta renda é mais propenso a contratar o PEP? E com baixa renda?
 	- Experimente X:Income, Colour:Sex e Y:Save-Act.  ---> o que se pode dizer das pessoas que poupam mais?
-***************************************
-- Volte ao módulo "Preprocess"
+
+5. Volte ao módulo "Preprocess"
 - Escolha e aplique um filtro de discretização aos dados: (Filter/Choose/filters/unsupervised/attribute/Discretize)
 - Marque os dados numéricos (age e income)
 - Examine os parâmetros de configuração do filtro. 10 bins é apropriado?
 - Aplique o filtro aos dados escolhidos (age e income) - Clique em "Apply".
 - Examine os dados outrora contínuos discretizados.
-***************************************
-- Vá para o módulo "Associate"
+
+6. Vá para o módulo "Associate"
 - Escolha o algoritmo de associação "APriori"
-- CLique em "Start"
+- Clique em "Start"
 - Examine as melhores regras encontradas em "Associator Output"
 - Configure o filtro: aumente o número de regras para "30" e rode novamente. 
 	- Houve mudança significativa? 
 - Configure o filtro: diminua a confiança para 0.7 e rode novamente.
 	- Houve mudança significativa?
-***************************************
-- Vá para o módulo "Attributes"
+
+7. Vá para o módulo "Attributes"
 - Escolha o algoritmo de avaliação de atributos "CfsSubsetEval"
 - Escolha o algoritmo de busca de atributos "BestFirst"
 - CLique em "Start"
 - Examine as melhores regras encontradas em "Attribute Selection Output"
 	- Quais são os atributos mais importantes para este dataset? Porquê?
-***************************************
-Repita os passos para os datasets: 
+
+8. Repita os passos para os datasets: 
 	- credit-g.arff (Quais características são importantes para que o crédito no mercado seja bom ou ruim? - parâmetro "class") 
 	- vote.arff (Como podemos caracterizar democratas e republicanos?)
-***************************************
-Opcional: Examine os datasets da aula passada (zoo.arff, weather.nominal.arff)
+
+9. Examine os datasets zoo.arff, weather.nominal.arff
