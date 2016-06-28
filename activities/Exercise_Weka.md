@@ -21,7 +21,7 @@
  - Monte uma árvore de decisão usando o algoritmo "SimpleKMeans"  
  - Configure o algoritmo para que sejam encontrados 4 clusters (Configure clicando em cima do nome do algoritmo em "Choose")  
  - Escolha "Use training set"  
- - CLique em "Start"  
+ - Clique em "Start"  
  - Examine na janela principal os centróides dos clusters formados.   
 	- Há grupos específicos que devem ser alvos de campanhas futuras para contratação do produto PEP?  
  - Clique no resultado (no Result list) com o botão direito e escolha a opção "Visualize Cluster Assignments"  
