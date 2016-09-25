@@ -66,6 +66,8 @@
             (facilita a instalação de pacotes)</li>
           <li><a href="http://docs.python.org/index.html">The Python Tutorial</a></li>
           <li><a href="http://git-scm.com/">Tutorial Git</a></li>
+          <li><a href="http://tableless.com.br/tudo-que-voce-queria-saber-sobre-git-e-github-mas-tinha-vergonha-de-perguntar/">Tutorial Git em português</a></li>
+
         </ul>
         <li style="color: rgb(0, 0, 153);">Pacotes Python Adicionais</li>
         <ul style="color: rgb(0, 0, 153);">
