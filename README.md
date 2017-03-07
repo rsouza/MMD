@@ -106,7 +106,9 @@
           <li><a href="http://cython.org/">Cython</a></li>
           <li><a href="https://docs.python.org/2/library/re.html">Python RE</a>
             / <a href="https://pypi.python.org/pypi/re2/">Python RE2</a></li>
+          <li><a href="https://github.com/rhiever/tpot">TPOT</a></li>
           <li><a href="https://github.com/NAMD/topicmodeling">Topicmodelling</a></li>
+           <li><a href="https://odo.readthedocs.io/en/latest/">Python ODO</a></li>
           <li><a href="http://docs.python-requests.org/en/latest/">Python
               Requests</a></li>
         </ul>
