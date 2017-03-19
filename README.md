@@ -93,6 +93,7 @@
           <li><a href="https://pypi.python.org/pypi/xlrd">Python XLRD (Excel
               Reader)</a></li>
           <li><a href="https://pypi.python.org/pypi/PyMySQL">Python pymysql</a></li>
+          <li><a href="https://pypi.python.org/pypi/psycopg2/">Python Psycopg2</a></li>
           <li><a href="http://zetcode.com/db/sqlitepythontutorial/">Python
               SQLite</a></li>
           <li><a href="http://docs.mongodb.org/ecosystem/drivers/python/">Python
@@ -111,6 +112,8 @@
            <li><a href="https://odo.readthedocs.io/en/latest/">Python ODO</a></li>
           <li><a href="http://docs.python-requests.org/en/latest/">Python
               Requests</a></li>
+          <li><a href="https://pypi.python.org/pypi/pyenchant/">Python
+              Enchant</a></li>    
         </ul>
         <li style="color: rgb(0, 0, 153);">Outros Softwares</li>
         <ul style="color: rgb(0, 0, 153);">
