@@ -84,6 +84,13 @@
           <li><a href="http://statsmodels.sourceforge.net/devel/index.html#">Python
               StatsModels</a></li>
           <li><a href="http://scikit-learn.org/stable/">Python Scikit Learn</a></li>
+          <li><a href="http://deeplearning.net/software/theano/">Theano</a></li>
+          <li><a href="https://www.tensorflow.org/">TensorFlow</a></li>
+          <li><a href="https://github.com/Lasagne/Lasagne">Lasagne</a></li>
+          <li><a href="https://pypi.python.org/pypi/nolearn">No Learn</a></li>
+          <li><a href="https://keras.io/">Keras</a></li>
+          <li><a href="http://contrib.scikit-learn.org/imbalanced-learn/">Imbalanced Learn</a></li>
+          <li><a href="http://pandas-ml.readthedocs.io/en/stable/">Pandas-ML</a></li>
           <li><a href="http://www.nltk.org/" style="color: rgb(0, 0, 153);">Python
               NLTK</a></li>
           <li><a href="http://networkx.github.io/#">Python NetworkX</a></li>
@@ -92,6 +99,8 @@
               Beautiful Soup</a></li>
           <li><a href="https://pypi.python.org/pypi/xlrd">Python XLRD (Excel
               Reader)</a></li>
+          <li><a href="https://pypi.python.org/pypi/XlsxWriter">Python XLWT (Excel
+              Writer)</a></li>    
           <li><a href="https://pypi.python.org/pypi/PyMySQL">Python pymysql</a></li>
           <li><a href="https://pypi.python.org/pypi/psycopg2/">Python Psycopg2</a></li>
           <li><a href="http://zetcode.com/db/sqlitepythontutorial/">Python
