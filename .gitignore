@@ -96,3 +96,5 @@ ENV/
 # mkdocs documentation
 /site
 
+#personal tweks
+/outputs

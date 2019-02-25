@@ -1,3 +1,6 @@
+THIS CONTENT IS BEING MOVED TO [https://github.com/rsouza/FGV_Intro_DS](https://github.com/rsouza/FGV_Intro_DS)
+
+
 <html>
   <head>
     <meta content="text/html; charset=windows-1252" http-equiv="content-type">
